@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gempir/go-twitch-irc/v2"
+	"github.com/zneix/tcb2/internal/mongo"
 )
 
 // types
@@ -16,6 +17,7 @@ type Self struct {
 
 type Bot struct {
 	TwitchIRC *twitch.Client
+	Mongo     *mongo.Connection
 
 	Logins   map[string]string
 	Channels map[string]*Channel
@@ -26,9 +28,9 @@ type Bot struct {
 }
 
 type Channel struct {
-	ID    string
-	Login string
-	Mode  ChannelMode
+	ID    string      `bson:"id"`
+	Login string      `bson:"login"`
+	Mode  ChannelMode `bson:"mode"`
 
 	LastMsg      string
 	QueueChannel chan *QueueMessage

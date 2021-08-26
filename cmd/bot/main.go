@@ -1,22 +1,30 @@
 package main
 
 import (
+	"context"
 	"log"
 	"time"
 
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/zneix/tcb2/internal/bot"
 	"github.com/zneix/tcb2/internal/config"
+	"github.com/zneix/tcb2/internal/mongo"
 )
 
 const (
-	version = "2.0-alpha"
+	VERSION = "2.0-alpha"
 )
 
 func main() {
-	log.Printf("Starting titlechange_bot v%s", version)
+	log.Printf("Starting titlechange_bot v%s", VERSION)
 
 	cfg := config.New()
+	ctx := context.Background()
+
+	mongoConnection := mongo.NewMongoConnection(cfg, ctx)
+	mongoConnection.Connect()
+
+	twitchIRC := twitch.NewClient(cfg.TwitchLogin, "oauth:"+cfg.TwitchOAuth)
 
 	self := &bot.Self{
 		Login: cfg.TwitchLogin,
@@ -24,11 +32,12 @@ func main() {
 	}
 
 	tcb := &bot.Bot{
-		TwitchIRC: twitch.NewClient(cfg.TwitchLogin, "oauth:"+cfg.TwitchOAuth),
-		Self:      self,
+		TwitchIRC: twitchIRC,
+		Mongo:     mongoConnection,
 		Logins:    make(map[string]string),
-		Channels:  make(map[string]*bot.Channel),
+		Channels:  initChannels(ctx, mongoConnection, twitchIRC),
 		Commands:  make(map[string]*bot.Command),
+		Self:      self,
 		StartTime: time.Now(),
 	}
 

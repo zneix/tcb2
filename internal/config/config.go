@@ -59,13 +59,23 @@ func mergeConfig(v *viper.Viper, configPaths []string) {
 
 func init() {
 	// Define command-line flags and default values
+
+	// API (EventSub)
 	pflag.StringP("base-url", "b", "", "Base URL of the API to which clients will make their requests. Useful if the API is proxied through reverse proxy like nginx. Value needs to contain full URL with protocol scheme, e.g. https://braize.pajlada.com/chatterino")
 	pflag.StringP("bind-address", "l", ":2558", "Address to which API will bind and start listening on")
 
+	// Twitch
 	pflag.String("twitch-login", "titlechange_bot", "Twitch login of the account on which bot will Log in to IRC")
 	pflag.String("twitch-oauth", "", "OAuth token of the account on which bot will Log in to IRC. Should not have the \"oauth:\" part in the beginning.")
 	pflag.String("twitch-client-id", "", "Twitch client ID")
 	pflag.String("twitch-client-secret", "", "Twitch client secret")
+
+	// Mongo 🥭
+	pflag.String("mongo-username", "", "Username for the MongoDB user")
+	pflag.String("mongo-password", "", "Password for the MongoDB user")
+	pflag.String("mongo-port", "27017", "Port to which connection will try to connect. Note that you can only connect to localhost due to security concerns (use ssh port tunneling while testing/developing)")
+	pflag.String("mongo-database-name", "tcb2", "Name of the database that should be used by the bot")
+	pflag.String("mongo-auth-db", "admin", "Name of the authentication database, used as AuthSource while creating a new mongo.Connection. This should usually be left unchanged")
 
 	pflag.Parse()
 }

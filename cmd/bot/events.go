@@ -34,24 +34,33 @@ func initializeEvents(tcb *bot.Bot) {
 		channel := tcb.Channels[channelID]
 
 		// Check if Channel.Mode changed by comparing bot's state
+		newMode := bot.ChannelModeNormal
+
+		// Bot will always have elevated permissions in its own chat, saving some time with the early-out
 		if channel.Login == tcb.Self.Login {
-			// Bot will always have elevated permissions in its own chat, saving some time with the early-out
 			return
 		}
 
-		// Check if bot's state in the Channel has changed
-		newMode := bot.ChannelModeNormal
-		for key := range message.User.Badges {
-			if key == "moderator" {
-				newMode = bot.ChannelModeModerator
-				break
+		// First check user-type
+		userType, ok := message.Tags["user-type"]
+		if !ok {
+			log.Println("[USERSTATE] user-type tag was not found in the IRC message, either no capabilities or Twitch removed this tag xd")
+		} else if userType == "mod" {
+			newMode = bot.ChannelModeModerator
+		} else {
+			// Since user-type does not care about VIP status, we need to check badges
+			for key := range message.User.Badges {
+				if key == "vip" || key == "moderator" {
+					newMode = bot.ChannelModeModerator
+					break
+				}
 			}
+
 		}
 
 		// Update ChannelMode in the current channel if it differs
 		if newMode != channel.Mode {
-			// TODO: Acknowledge mode change
-			channel.Mode = newMode
+			channel.ChangeMode(tcb.Mongo, newMode)
 		}
 
 	})

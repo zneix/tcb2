@@ -13,5 +13,11 @@ type TCBConfig struct {
 	TwitchClientID     string `mapstructure:"twitch-client-id"`
 	TwitchClientSecret string `mapstructure:"twitch-client-secret"`
 
-	// TODO: Mongo
+	// Mongo 🥭
+
+	MongoUsername     string `mapstructure:"mongo-username"`
+	MongoPassword     string `mapstructure:"mongo-password"`
+	MongoPort         string `mapstructure:"mongo-port"`
+	MongoDatabaseName string `mapstructure:"mongo-database-name"`
+	MongoAuthDB       string `mapstructure:"mongo-auth-db"`
 }
