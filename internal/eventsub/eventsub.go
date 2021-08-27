@@ -10,8 +10,29 @@ import (
 	"github.com/zneix/tcb2/internal/config"
 )
 
-func (esub *EventSub) getCallbackString() string {
-	return strings.TrimSuffix("", "/") + "/eventsubcallback"
+func (esub *EventSub) CreateChannelSubscription(helixClient *helix.Client, subscription *ChannelSubscription) error {
+	resp, err := helixClient.CreateEventSubSubscription(&helix.EventSubSubscription{
+		Type:    subscription.Type,
+		Version: subscription.Version,
+		Condition: helix.EventSubCondition{
+			BroadcasterUserID: subscription.ChannelID,
+		},
+		Transport: helix.EventSubTransport{
+			Method:   "webhook",
+			Callback: esub.callbackURL,
+			Secret:   esub.secret,
+		},
+	})
+	if err != nil {
+		return err
+	}
+
+	log.Printf("[EventSub] Create subscription response for %s: %# v\n", subscription, resp.Data)
+
+	// TODO: Properly handle pending status
+	//subscriptionsPending = append(subscriptionsPending, sub.ID)
+
+	return nil
 }
 
 func (esub *EventSub) handleIncomingNotification(notification eventSubNotification) {
@@ -75,7 +96,8 @@ func (esub *EventSub) OnStreamOfflineEvent(callback func(event helix.EventSubStr
 
 func New(cfg config.TCBConfig, apiServer *api.APIServer) *EventSub {
 	eventsub := &EventSub{
-		secret: cfg.TwitchEventSubSecret,
+		secret:      cfg.TwitchEventSubSecret,
+		callbackURL: strings.TrimSuffix(apiServer.BaseURL, "/") + "/eventsub/callback",
 	}
 
 	eventsub.registerAPIRoutes(apiServer)

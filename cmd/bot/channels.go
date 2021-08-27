@@ -7,6 +7,7 @@ import (
 
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/zneix/tcb2/internal/bot"
+	"github.com/zneix/tcb2/internal/eventsub"
 	"github.com/zneix/tcb2/internal/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -59,5 +60,24 @@ func joinChannels(tcb *bot.Bot) {
 
 		// JOIN the channel
 		tcb.TwitchIRC.Join(channel.Login)
+
+		// Create EventSub subscriptions (but don't block)
+		go func(channelID string) {
+			tcb.EventSub.CreateChannelSubscription(tcb.Helix, &eventsub.ChannelSubscription{
+				Type:      "channel.update",
+				Version:   "1",
+				ChannelID: channelID,
+			})
+			tcb.EventSub.CreateChannelSubscription(tcb.Helix, &eventsub.ChannelSubscription{
+				Type:      "stream.online",
+				Version:   "1",
+				ChannelID: channelID,
+			})
+			tcb.EventSub.CreateChannelSubscription(tcb.Helix, &eventsub.ChannelSubscription{
+				Type:      "stream.offline",
+				Version:   "1",
+				ChannelID: channelID,
+			})
+		}(channel.ID)
 	}
 }

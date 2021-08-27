@@ -11,7 +11,6 @@ import (
 )
 
 // eventSubIndex handles GET /eventsub
-
 func eventSubIndex(esub *EventSub, server *api.APIServer) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
@@ -24,25 +23,23 @@ func eventSubCallback(esub *EventSub, server *api.APIServer) func(w http.Respons
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
-			log.Println("Error reading request body in eventSubCallback: " + err.Error())
+			log.Println("[EventSub] Error reading request body in eventSubCallback: " + err.Error())
 			return
 		}
 		defer r.Body.Close()
 
 		// First of all, check if the message really came from Twitch by verifying the signature
-		if !helix.VerifyEventSubNotification("", r.Header, string(body)) {
-			log.Println("Received a notification, but the signature was invalid")
+		if !helix.VerifyEventSubNotification(esub.secret, r.Header, string(body)) {
+			log.Println("[EventSub] Received a notification, but the signature was invalid")
 			w.WriteHeader(http.StatusForbidden)
 			return
 		}
 
 		// Read data sent in the request
 		var notification eventSubNotification
-		//err = json.NewDecoder(bytes.NewReader(body)).Decode(&vals)
 		err = json.Unmarshal(body, &notification)
 		if err != nil {
-			log.Printf("Error unmarshaling incoming eventsub message: %s, request body: %s\n", err, string(body))
-
+			log.Printf("[EventSub] Failed to unmarshal incoming message: %s, request body: %s\n", err, string(body))
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
@@ -57,7 +54,6 @@ func eventSubCallback(esub *EventSub, server *api.APIServer) func(w http.Respons
 		esub.handleIncomingNotification(notification)
 		w.WriteHeader(http.StatusOK)
 	}
-
 }
 
 func (esub *EventSub) registerAPIRoutes(server *api.APIServer) {
