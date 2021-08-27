@@ -11,9 +11,12 @@ import (
 	"github.com/zneix/tcb2/internal/config"
 )
 
-type apiServer struct {
-	// baseURL ...
-	baseURL string
+type APIServer struct {
+	// Router ...
+	Router *chi.Mux
+
+	// BaseURL ...
+	BaseURL string
 
 	// bindAddress on which the HTTP server will listen on
 	bindAddress string
@@ -21,19 +24,16 @@ type apiServer struct {
 	// listenPrefix ...
 	listenPrefix string
 
-	// router ...
-	router *chi.Mux
-
 	startTime time.Time
 }
 
 // mountRouter tries to figure out listenPrefix from server.BaseURL
-func mountRouter(server *apiServer) *chi.Mux {
-	if server.baseURL == "" {
-		return server.router
+func mountRouter(server *APIServer) *chi.Mux {
+	if server.BaseURL == "" {
+		return server.Router
 	}
 
-	u, err := url.Parse(server.baseURL)
+	u, err := url.Parse(server.BaseURL)
 	if err != nil {
 		log.Fatalln("[API] Error mounting router: " + err.Error())
 	}
@@ -45,13 +45,13 @@ func mountRouter(server *apiServer) *chi.Mux {
 		server.listenPrefix = u.Path
 	}
 	ur := chi.NewRouter()
-	ur.Mount(server.listenPrefix, server.router)
-	server.router = ur
+	ur.Mount(server.listenPrefix, server.Router)
+	server.Router = ur
 
 	return ur
 }
 
-func (server *apiServer) Listen() {
+func (server *APIServer) Listen() {
 
 	srv := &http.Server{
 		Handler:      mountRouter(server),
@@ -60,26 +60,26 @@ func (server *apiServer) Listen() {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	log.Printf("[API] Listening on %s (Prefix=%s, BaseURL=%s)\n", server.bindAddress, server.listenPrefix, server.baseURL)
+	log.Printf("[API] Listening on %s (Prefix=%s, BaseURL=%s)\n", server.bindAddress, server.listenPrefix, server.BaseURL)
 	log.Fatal(srv.ListenAndServe())
 }
 
-func New(cfg config.TCBConfig) *apiServer {
+func New(cfg config.TCBConfig) *APIServer {
 	router := chi.NewRouter()
 
 	// Strip trailing slashes from API requests
 	router.Use(middleware.StripSlashes)
 
-	server := &apiServer{
-		baseURL:      cfg.BaseURL,
+	server := &APIServer{
+		Router:       router,
+		BaseURL:      cfg.BaseURL,
 		bindAddress:  cfg.BindAddress,
 		listenPrefix: "/",
-		router:       router,
 		startTime:    time.Now(),
 	}
 
 	// Handle routes
-	handleMainRoutes(server)
+	registerMainRoutes(server)
 
 	return server
 }

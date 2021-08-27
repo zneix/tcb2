@@ -5,6 +5,7 @@ import (
 
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/nicklaw5/helix"
+	"github.com/zneix/tcb2/internal/eventsub"
 	"github.com/zneix/tcb2/internal/mongo"
 )
 
@@ -20,6 +21,7 @@ type Bot struct {
 	TwitchIRC *twitch.Client
 	Mongo     *mongo.Connection
 	Helix     *helix.Client
+	EventSub  *eventsub.EventSub
 
 	Logins   map[string]string
 	Channels map[string]*Channel

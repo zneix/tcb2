@@ -9,6 +9,7 @@ import (
 	"github.com/zneix/tcb2/internal/api"
 	"github.com/zneix/tcb2/internal/bot"
 	"github.com/zneix/tcb2/internal/config"
+	"github.com/zneix/tcb2/internal/eventsub"
 	"github.com/zneix/tcb2/internal/helixclient"
 	"github.com/zneix/tcb2/internal/mongo"
 )
@@ -33,6 +34,10 @@ func main() {
 		log.Fatalf("[Helix] Error while initializing client: %s\n", err)
 	}
 
+	apiServer := api.New(cfg)
+
+	esub := eventsub.New(cfg, apiServer)
+
 	self := &bot.Self{
 		Login: cfg.TwitchLogin,
 		OAuth: cfg.TwitchOAuth,
@@ -42,6 +47,7 @@ func main() {
 		TwitchIRC: twitchIRC,
 		Mongo:     mongoConnection,
 		Helix:     helixClient,
+		EventSub:  esub,
 		Logins:    make(map[string]string),
 		Channels:  initChannels(ctx, mongoConnection, twitchIRC),
 		Commands:  make(map[string]*bot.Command),
@@ -53,8 +59,7 @@ func main() {
 	initializeEvents(tcb)
 
 	// TODO: Manage goroutines below and (currently blocking) Connect() with sync.WaitGroup
-	// Create and listen on the new API instance
-	apiServer := api.New(cfg)
+	// Listen on the API instance
 	go apiServer.Listen()
 
 	err = tcb.TwitchIRC.Connect()

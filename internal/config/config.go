@@ -60,7 +60,7 @@ func mergeConfig(v *viper.Viper, configPaths []string) {
 func init() {
 	// Define command-line flags and default values
 
-	// API (EventSub)
+	// API
 	pflag.StringP("base-url", "b", "", "Base URL of the API to which clients will make their requests. Useful if the API is proxied through reverse proxy like nginx. Value needs to contain full URL with protocol scheme, e.g. https://braize.pajlada.com/chatterino")
 	pflag.StringP("bind-address", "l", ":2558", "Address to which API will bind and start listening on")
 
@@ -69,6 +69,7 @@ func init() {
 	pflag.String("twitch-oauth", "", "OAuth token of the account on which bot will Log in to IRC. Should not have the \"oauth:\" part in the beginning.")
 	pflag.String("twitch-client-id", "", "Twitch client ID")
 	pflag.String("twitch-client-secret", "", "Twitch client secret")
+	pflag.String("twitch-eventsub-secret", "", "Twitch EventSub secret used to create subscriptions and verify incoming notifications. Must be between 10 and 100 characters long")
 
 	// Mongo 🥭
 	pflag.String("mongo-username", "", "Username for the MongoDB user")

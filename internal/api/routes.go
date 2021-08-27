@@ -9,7 +9,7 @@ import (
 )
 
 // index handles GET /
-func index(server *apiServer) func(w http.ResponseWriter, r *http.Request) {
+func index(server *APIServer) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
 		w.Write([]byte("This is the public titlechange_bot's API, most of the endpoints however are (and will be) undocumented ThreeLetterAPI TeaTime\nMore information on the GitHub repo: https://github.com/zneix/tcb2\n"))
@@ -17,7 +17,7 @@ func index(server *apiServer) func(w http.ResponseWriter, r *http.Request) {
 }
 
 // health handles GET /health
-func health(server *apiServer) func(w http.ResponseWriter, r *http.Request) {
+func health(server *APIServer) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var m runtime.MemStats
 		runtime.ReadMemStats(&m)
@@ -32,7 +32,7 @@ func health(server *apiServer) func(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleMainRoutes(server *apiServer) {
-	server.router.Get("/", index(server))
-	server.router.Get("/health", health(server))
+func registerMainRoutes(server *APIServer) {
+	server.Router.Get("/", index(server))
+	server.Router.Get("/health", health(server))
 }

@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/gempir/go-twitch-irc/v2"
+	"github.com/nicklaw5/helix"
 	"github.com/zneix/tcb2/internal/bot"
 )
 
@@ -63,5 +64,22 @@ func initializeEvents(tcb *bot.Bot) {
 			channel.ChangeMode(tcb.Mongo, newMode)
 		}
 
+	})
+
+	// Twitch EventSub events
+
+	// channel.update
+	tcb.EventSub.OnChannelUpdateEvent(func(event helix.EventSubChannelUpdateEvent) {
+		// TODO: Handle received event
+	})
+
+	// stream.online
+	tcb.EventSub.OnStreamOnlineEvent(func(event helix.EventSubStreamOnlineEvent) {
+		// TODO: Handle received event
+	})
+
+	// stream.offline
+	tcb.EventSub.OnStreamOfflineEvent(func(event helix.EventSubStreamOfflineEvent) {
+		// TODO: Handle received event
 	})
 }
