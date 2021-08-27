@@ -37,8 +37,7 @@ func NewMongoConnection(cfg config.TCBConfig, bgctx context.Context) *Connection
 }
 
 func (conn Connection) Connect() {
-	// Initialize context
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(conn.ctx, 10*time.Second)
 	defer cancel()
 
 	err := conn.client.Connect(ctx)
@@ -48,14 +47,16 @@ func (conn Connection) Connect() {
 
 	err = conn.client.Ping(ctx, nil)
 	if err != nil {
-		log.Fatalln("[Mongo] Error while executing the ping" + err.Error())
+		log.Fatalln("[Mongo] Error while executing the ping " + err.Error())
 	}
 	log.Println("[Mongo] connected")
 }
 
 func (conn Connection) Disconnect() {
-	err := conn.client.Disconnect(conn.ctx)
+	ctx, cancel := context.WithTimeout(conn.ctx, 10*time.Second)
+	defer cancel()
 
+	err := conn.client.Disconnect(ctx)
 	if err != nil {
 		log.Println("[Mongo] Error disconnecting: " + err.Error())
 	}
