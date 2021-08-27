@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/gempir/go-twitch-irc/v2 v2.6.0
 	github.com/go-chi/chi/v5 v5.0.3
-	github.com/nicklaw5/helix v1.24.2
+	github.com/nicklaw5/helix v1.24.3
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.8.1
 	go.mongodb.org/mongo-driver v1.7.1
