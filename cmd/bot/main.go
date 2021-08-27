@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gempir/go-twitch-irc/v2"
+	"github.com/zneix/tcb2/internal/api"
 	"github.com/zneix/tcb2/internal/bot"
 	"github.com/zneix/tcb2/internal/config"
 	"github.com/zneix/tcb2/internal/helixclient"
@@ -48,8 +49,13 @@ func main() {
 		StartTime: time.Now(),
 	}
 
-	// init actions that require bot.Bot object initialized already
+	// Init actions that require bot.Bot object initialized already
 	initializeEvents(tcb)
+
+	// TODO: Manage goroutines below and (currently blocking) Connect() with sync.WaitGroup
+	// Create and listen on the new API instance
+	apiServer := api.New(cfg)
+	go apiServer.Listen()
 
 	err = tcb.TwitchIRC.Connect()
 	if err != nil {
