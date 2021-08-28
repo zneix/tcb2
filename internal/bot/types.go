@@ -25,7 +25,7 @@ type Bot struct {
 
 	Logins   map[string]string
 	Channels map[string]*Channel
-	Commands map[string]*Command
+	Commands *CommandController
 
 	Self      *Self
 	StartTime time.Time
@@ -42,9 +42,18 @@ type Channel struct {
 
 type Command struct {
 	Name        string
+	Aliases     []string
 	Description string
-	Usage       string
 	Run         func(msg twitch.PrivateMessage, args []string)
+
+	// TODO
+	// Usage string
+	// Cooldown ??? (perhaps it shouldn't be in the Command object, but rather in Bot / redis)
+}
+
+type CommandController struct {
+	commands map[string]*Command
+	aliases  map[string]string
 }
 
 type QueueMessage struct {

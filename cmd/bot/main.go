@@ -15,7 +15,8 @@ import (
 )
 
 const (
-	VERSION = "2.0-alpha"
+	VERSION        = "2.0-alpha"
+	COMMAND_PREFIX = "!"
 )
 
 func main() {
@@ -50,13 +51,14 @@ func main() {
 		EventSub:  esub,
 		Logins:    make(map[string]string),
 		Channels:  initChannels(ctx, mongoConnection, twitchIRC),
-		Commands:  make(map[string]*bot.Command),
+		Commands:  bot.NewCommandController(),
 		Self:      self,
 		StartTime: time.Now(),
 	}
 
 	// Init actions that require bot.Bot object initialized already
 	initializeEvents(tcb)
+	registerCommands(tcb)
 
 	// TODO: Manage goroutines below and (currently blocking) Connect() with sync.WaitGroup
 	// Listen on the API instance

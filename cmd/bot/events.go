@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"strings"
 
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/nicklaw5/helix"
@@ -19,8 +20,30 @@ func initializeEvents(tcb *bot.Bot) {
 
 	// PRIVMSG
 	tcb.TwitchIRC.OnPrivateMessage(func(message twitch.PrivateMessage) {
-		// TODO: Add PRIVMSG handling
-		//channel := tcb.Channels[message.RoomID]
+		// Ignore non-commands
+		if !strings.HasPrefix(message.Message, COMMAND_PREFIX) {
+			return
+		}
+
+		// Parse command name and arguments
+		args := strings.Fields(message.Message)
+		commandName := args[0][len(COMMAND_PREFIX):]
+		args = args[1:]
+
+		// Try to find the command by its name and/or aliases
+		command, exists := tcb.Commands.GetCommand(commandName)
+		if !exists {
+			return
+		}
+
+		// TODO: [Permissions] Check if user is allowed to execute the command
+
+		// TODO: [Cooldowns] Check if user is on cooldown
+
+		// Execute the command
+		command.Run(message, args)
+
+		// TODO: [Cooldowns] Apply cooldown if user's permissions don't allow to skip it
 	})
 
 	// USERSTATE
