@@ -10,7 +10,7 @@ import (
 	"github.com/zneix/tcb2/internal/bot"
 )
 
-func initializeEvents(tcb *bot.Bot) {
+func registerEvents(tcb *bot.Bot) {
 	// Twitch IRC events
 
 	// Authenticated with IRC

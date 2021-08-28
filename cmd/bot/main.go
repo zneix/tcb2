@@ -50,14 +50,14 @@ func main() {
 		Helix:     helixClient,
 		EventSub:  esub,
 		Logins:    make(map[string]string),
-		Channels:  initChannels(ctx, mongoConnection, twitchIRC),
+		Channels:  loadChannels(ctx, mongoConnection, twitchIRC),
 		Commands:  bot.NewCommandController(),
 		Self:      self,
 		StartTime: time.Now(),
 	}
 
-	// Init actions that require bot.Bot object initialized already
-	initializeEvents(tcb)
+	// Register actions that require bot.Bot object initialized already
+	registerEvents(tcb)
 	registerCommands(tcb)
 
 	// TODO: Manage goroutines below and (currently blocking) Connect() with sync.WaitGroup

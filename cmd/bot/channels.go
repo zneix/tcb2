@@ -12,8 +12,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// initChannels fetches configured channels from the database, sets default values and message queue for each of them
-func initChannels(bgctx context.Context, mongoConn *mongo.Connection, twitchIRC *twitch.Client) map[string]*bot.Channel {
+// loadChannels fetches configured channels from the database, sets default values and message queue for each of them
+func loadChannels(bgctx context.Context, mongoConn *mongo.Connection, twitchIRC *twitch.Client) map[string]*bot.Channel {
 	channels := make(map[string]*bot.Channel)
 
 	ctx, cancel := context.WithTimeout(bgctx, 10*time.Second)
