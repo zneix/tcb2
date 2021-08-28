@@ -12,7 +12,7 @@ func Ping(tcb *bot.Bot) *bot.Command {
 	return &bot.Command{
 		Name:            "ping",
 		Aliases:         []string{"tcbping"},
-		Description:     "",
+		Description:     "Pings the bot to see if it's online",
 		CooldownChannel: 1 * time.Second,
 		CooldownUser:    2 * time.Second,
 		Run: func(msg twitch.PrivateMessage, args []string) {

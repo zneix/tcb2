@@ -7,4 +7,5 @@ import (
 
 func registerCommands(tcb *bot.Bot) {
 	tcb.Commands.RegisterCommand(commands.Ping(tcb))
+	tcb.Commands.RegisterCommand(commands.Bot(tcb))
 }
