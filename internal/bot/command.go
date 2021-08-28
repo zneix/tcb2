@@ -1,5 +1,7 @@
 package bot
 
+import "time"
+
 func (c *CommandController) GetCommand(alias string) (*Command, bool) {
 	name, ok := c.aliases[alias]
 	if !ok {
@@ -11,6 +13,9 @@ func (c *CommandController) GetCommand(alias string) (*Command, bool) {
 }
 
 func (c *CommandController) RegisterCommand(cmd *Command) {
+	cmd.LastExecutionChannel = make(map[string]time.Time)
+	cmd.LastExecutionUser = make(map[string]time.Time)
+
 	c.commands[cmd.Name] = cmd
 
 	c.aliases[cmd.Name] = cmd.Name

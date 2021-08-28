@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"strings"
+	"time"
 
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/nicklaw5/helix"
@@ -38,12 +39,18 @@ func initializeEvents(tcb *bot.Bot) {
 
 		// TODO: [Permissions] Check if user is allowed to execute the command
 
-		// TODO: [Cooldowns] Check if user is on cooldown
+		// Check if channel or user is on cooldown
+		if time.Since(command.LastExecutionChannel[message.RoomID]) < command.CooldownChannel || time.Since(command.LastExecutionUser[message.User.ID]) < command.CooldownUser {
+			return
+		}
 
 		// Execute the command
 		command.Run(message, args)
 
-		// TODO: [Cooldowns] Apply cooldown if user's permissions don't allow to skip it
+		// Apply cooldown if user's permissions don't allow to skip it
+		// TODO: [Permissions] Don't apply user cooldowns to users that are allowed to skip it
+		command.LastExecutionChannel[message.RoomID] = time.Now()
+		command.LastExecutionUser[message.User.ID] = time.Now()
 	})
 
 	// USERSTATE
