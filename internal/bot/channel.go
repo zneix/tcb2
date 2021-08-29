@@ -29,7 +29,7 @@ func (channel *Channel) StartMessageQueue(twitchIRC *twitch.Client) {
 
 func (channel *Channel) Send(message string) {
 	// Don't attempt to send an empty message
-	if len(message) == 0 {
+	if message == "" {
 		return
 	}
 
