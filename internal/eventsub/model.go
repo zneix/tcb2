@@ -20,7 +20,7 @@ type ChannelSubscription struct {
 }
 
 func (subscription *ChannelSubscription) String() string {
-	return fmt.Sprintf("%s-%s", subscription.Type, subscription.Version)
+	return fmt.Sprintf("%s-%s@%s", subscription.Type, subscription.Version, subscription.ChannelID)
 }
 
 type EventSub struct {
