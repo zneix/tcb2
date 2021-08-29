@@ -74,11 +74,15 @@ func registerEvents(tcb *bot.Bot) {
 
 		// First check user-type
 		userType, ok := message.Tags["user-type"]
-		if !ok {
+		switch {
+
+		case !ok:
 			log.Println("[USERSTATE] user-type tag was not found in the IRC message, either no capabilities or Twitch removed this tag xd")
-		} else if userType == "mod" {
+
+		case userType == "mod":
 			newMode = bot.ChannelModeModerator
-		} else {
+
+		default:
 			// Since user-type does not care about VIP status, we need to check badges
 			for key := range message.User.Badges {
 				if key == "vip" || key == "moderator" {
