@@ -11,7 +11,7 @@ import (
 	"github.com/zneix/tcb2/internal/config"
 )
 
-type APIServer struct {
+type Server struct {
 	// Router ...
 	Router *chi.Mux
 
@@ -28,7 +28,7 @@ type APIServer struct {
 }
 
 // mountRouter tries to figure out listenPrefix from server.BaseURL
-func mountRouter(server *APIServer) *chi.Mux {
+func mountRouter(server *Server) *chi.Mux {
 	if server.BaseURL == "" {
 		return server.Router
 	}
@@ -51,7 +51,7 @@ func mountRouter(server *APIServer) *chi.Mux {
 	return ur
 }
 
-func (server *APIServer) Listen() {
+func (server *Server) Listen() {
 
 	srv := &http.Server{
 		Handler:      mountRouter(server),
@@ -64,13 +64,13 @@ func (server *APIServer) Listen() {
 	log.Fatal(srv.ListenAndServe())
 }
 
-func New(cfg *config.TCBConfig) *APIServer {
+func New(cfg *config.TCBConfig) *Server {
 	router := chi.NewRouter()
 
 	// Strip trailing slashes from API requests
 	router.Use(middleware.StripSlashes)
 
-	server := &APIServer{
+	server := &Server{
 		Router:       router,
 		BaseURL:      cfg.BaseURL,
 		bindAddress:  cfg.BindAddress,
