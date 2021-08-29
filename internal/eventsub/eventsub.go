@@ -30,14 +30,13 @@ func (esub *EventSub) CreateChannelSubscription(helixClient *helix.Client, subsc
 	log.Printf("[EventSub] Create subscription response for %s: %# v\n", subscription, resp.Data)
 
 	// TODO: Properly handle pending status
-	//subscriptionsPending = append(subscriptionsPending, sub.ID)
+	// subscriptionsPending = append(subscriptionsPending, sub.ID)
 
 	return nil
 }
 
-func (esub *EventSub) handleIncomingNotification(notification eventSubNotification) {
+func (esub *EventSub) handleIncomingNotification(notification *eventSubNotification) {
 	switch notification.Subscription.Type {
-
 	case helix.EventSubTypeChannelUpdate:
 		// channel.update
 		var event helix.EventSubChannelUpdateEvent
@@ -94,7 +93,7 @@ func (esub *EventSub) OnStreamOfflineEvent(callback func(event helix.EventSubStr
 	esub.onStreamOfflineEvent = callback
 }
 
-func New(cfg config.TCBConfig, apiServer *api.APIServer) *EventSub {
+func New(cfg *config.TCBConfig, apiServer *api.Server) *EventSub {
 	eventsub := &EventSub{
 		secret:      cfg.TwitchEventSubSecret,
 		callbackURL: strings.TrimSuffix(apiServer.BaseURL, "/") + "/eventsub/callback",

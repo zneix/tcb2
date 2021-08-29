@@ -22,13 +22,13 @@ func registerEvents(tcb *bot.Bot) {
 	// PRIVMSG
 	tcb.TwitchIRC.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		// Ignore non-commands
-		if !strings.HasPrefix(message.Message, COMMAND_PREFIX) {
+		if !strings.HasPrefix(message.Message, COMMANDPREFIX) {
 			return
 		}
 
 		// Parse command name and arguments
 		args := strings.Fields(message.Message)
-		commandName := args[0][len(COMMAND_PREFIX):]
+		commandName := args[0][len(COMMANDPREFIX):]
 		args = args[1:]
 
 		// Try to find the command by its name and/or aliases
@@ -72,13 +72,15 @@ func registerEvents(tcb *bot.Bot) {
 			return
 		}
 
-		// First check user-type
 		userType, ok := message.Tags["user-type"]
-		if !ok {
+		switch {
+		case !ok:
 			log.Println("[USERSTATE] user-type tag was not found in the IRC message, either no capabilities or Twitch removed this tag xd")
-		} else if userType == "mod" {
+
+		case userType == "mod":
 			newMode = bot.ChannelModeModerator
-		} else {
+
+		default:
 			// Since user-type does not care about VIP status, we need to check badges
 			for key := range message.User.Badges {
 				if key == "vip" || key == "moderator" {
@@ -86,14 +88,15 @@ func registerEvents(tcb *bot.Bot) {
 					break
 				}
 			}
-
 		}
 
 		// Update ChannelMode in the current channel if it differs
 		if newMode != channel.Mode {
-			channel.ChangeMode(tcb.Mongo, newMode)
+			err := channel.ChangeMode(tcb.Mongo, newMode)
+			if err != nil {
+				log.Printf("Failed to change mode in %s: %s\n", channel, err)
+			}
 		}
-
 	})
 
 	// Twitch EventSub events

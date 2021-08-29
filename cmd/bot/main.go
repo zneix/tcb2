@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	VERSION        = "2.0-alpha"
-	COMMAND_PREFIX = "!"
+	VERSION       = "2.0-alpha"
+	COMMANDPREFIX = "!"
 )
 
 func main() {
@@ -25,7 +25,7 @@ func main() {
 	cfg := config.New()
 	ctx := context.Background()
 
-	mongoConnection := mongo.NewMongoConnection(cfg, ctx)
+	mongoConnection := mongo.NewMongoConnection(ctx, cfg)
 	mongoConnection.Connect()
 
 	twitchIRC := twitch.NewClient(cfg.TwitchLogin, "oauth:"+cfg.TwitchOAuth)

@@ -12,7 +12,7 @@ import (
 )
 
 // NewMongoConnection creates a new instance of mongo.Connection. Keep in mind that Connect() has to be called before using it
-func NewMongoConnection(cfg config.TCBConfig, bgctx context.Context) *Connection {
+func NewMongoConnection(bgctx context.Context, cfg *config.TCBConfig) *Connection {
 	// Prepare mongo client's options
 	uri := fmt.Sprintf("mongodb://%s:%s", "localhost", cfg.MongoPort)
 	credentials := options.Credential{
@@ -26,7 +26,7 @@ func NewMongoConnection(cfg config.TCBConfig, bgctx context.Context) *Connection
 	client, err := mongo.NewClient(clientOptions)
 
 	if err != nil {
-		log.Fatalf("Failed to init mongo client: %s\n", err.Error())
+		log.Fatalf("[Mongo] Failed to create a new client: %s\n", err.Error())
 	}
 
 	return &Connection{

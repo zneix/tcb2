@@ -9,15 +9,15 @@ import (
 )
 
 // index handles GET /
-func index(server *APIServer) func(w http.ResponseWriter, r *http.Request) {
+func index(server *Server) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
-		w.Write([]byte("This is the public titlechange_bot's API, most of the endpoints however are (and will be) undocumented ThreeLetterAPI TeaTime\nMore information on the GitHub repo: https://github.com/zneix/tcb2\n"))
+		_, _ = w.Write([]byte("This is the public titlechange_bot's API, most of the endpoints however are (and will be) undocumented ThreeLetterAPI TeaTime\nMore information on the GitHub repo: https://github.com/zneix/tcb2\n"))
 	}
 }
 
 // health handles GET /health
-func health(server *APIServer) func(w http.ResponseWriter, r *http.Request) {
+func health(server *Server) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var m runtime.MemStats
 		runtime.ReadMemStats(&m)
@@ -28,11 +28,11 @@ func health(server *APIServer) func(w http.ResponseWriter, r *http.Request) {
 			m.Sys/1024/1024,
 			m.NumGC)
 
-		w.Write([]byte(fmt.Sprintf("API Uptime: %s\nMemory: %s\n", utils.TimeSince(server.startTime), memory)))
+		_, _ = w.Write([]byte(fmt.Sprintf("API Uptime: %s\nMemory: %s\n", utils.TimeSince(server.startTime), memory)))
 	}
 }
 
-func registerMainRoutes(server *APIServer) {
+func registerMainRoutes(server *Server) {
 	server.Router.Get("/", index(server))
 	server.Router.Get("/health", health(server))
 }

@@ -34,7 +34,7 @@ func readFromPath(path string) (values map[string]interface{}, err error) {
 		return
 	}
 
-	v.Unmarshal(&values)
+	_ = v.Unmarshal(&values)
 
 	return
 }
@@ -48,12 +48,12 @@ func readFromPath(path string) (values map[string]interface{}, err error) {
 // value will be used
 func mergeConfig(v *viper.Viper, configPaths []string) {
 	for _, configPath := range configPaths {
-		if configMap, err := readFromPath(configPath); err != nil {
+		configMap, err := readFromPath(configPath)
+		if err != nil {
 			fmt.Printf("Error reading config file from %s.yaml: %s\n", filepath.Join(configPath, configName), err)
 			return
-		} else {
-			v.MergeConfigMap(configMap)
 		}
+		_ = v.MergeConfigMap(configMap)
 	}
 }
 
@@ -81,10 +81,10 @@ func init() {
 	pflag.Parse()
 }
 
-func New() (cfg TCBConfig) {
+func New() (cfg *TCBConfig) {
 	v := viper.New()
 
-	v.BindPFlags(pflag.CommandLine)
+	_ = v.BindPFlags(pflag.CommandLine)
 
 	// figure out XDG_DATA_CONFIG to be compliant with the standard
 	xdgConfigHome, exists := os.LookupEnv("XDG_CONFIG_HOME")
@@ -112,8 +112,8 @@ func New() (cfg TCBConfig) {
 	v.SetEnvPrefix(appName)
 	v.AutomaticEnv()
 
-	v.UnmarshalExact(&cfg)
+	_ = v.UnmarshalExact(&cfg)
 
-	//fmt.Printf("%# v\n", cfg) // uncomment for debugging purposes
+	// fmt.Printf("%# v\n", cfg) // uncomment for debugging purposes
 	return
 }

@@ -11,15 +11,15 @@ import (
 )
 
 // eventSubIndex handles GET /eventsub
-func eventSubIndex(esub *EventSub, server *api.APIServer) func(w http.ResponseWriter, r *http.Request) {
+func eventSubIndex(esub *EventSub) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
-		w.Write([]byte("EventSub route index PauseManShit\n"))
+		_, _ = w.Write([]byte("EventSub route index PauseManShit\n"))
 	}
 }
 
 // eventSubCallback handles POST /eventsub/callback
-func eventSubCallback(esub *EventSub, server *api.APIServer) func(w http.ResponseWriter, r *http.Request) {
+func eventSubCallback(esub *EventSub) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -47,16 +47,16 @@ func eventSubCallback(esub *EventSub, server *api.APIServer) func(w http.Respons
 		// If a challenge is specified in request, respond to it
 		if notification.Challenge != "" {
 			w.Header().Set("Content-Type", "text/plain")
-			w.Write([]byte(notification.Challenge))
+			_, _ = w.Write([]byte(notification.Challenge))
 			return
 		}
 
-		esub.handleIncomingNotification(notification)
+		esub.handleIncomingNotification(&notification)
 		w.WriteHeader(http.StatusOK)
 	}
 }
 
-func (esub *EventSub) registerAPIRoutes(server *api.APIServer) {
-	server.Router.Get("/eventsub", eventSubIndex(esub, server))
-	server.Router.Post("/eventsub/callback", eventSubCallback(esub, server))
+func (esub *EventSub) registerAPIRoutes(server *api.Server) {
+	server.Router.Get("/eventsub", eventSubIndex(esub))
+	server.Router.Post("/eventsub/callback", eventSubCallback(esub))
 }
