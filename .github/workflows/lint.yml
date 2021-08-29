@@ -28,6 +28,7 @@ jobs:
         with:
           fail_on_error: true
           go_version: ${{ matrix.go }}
+          filter_mode: nofilter
       #- name: Lint the code
         #uses: golangci/golangci-lint-action@v2.5.2
         #with:
