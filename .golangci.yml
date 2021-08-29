@@ -20,6 +20,7 @@ linters-settings:
     disabled-checks:
       - unnamedResult
       - commentedOutCode
+      - exitAfterDefer # TODO: Investigate re-enabling this one
   funlen:
     lines: 200
     statements: 50
