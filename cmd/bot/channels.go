@@ -26,7 +26,7 @@ func loadChannels(bgctx context.Context, mongoConn *mongo.Connection, twitchIRC 
 		},
 	})
 	if err != nil {
-		defer log.Fatalln("[Mongo] Error querying channels: " + err.Error())
+		log.Fatalln("[Mongo] Error querying channels: " + err.Error())
 		return nil
 	}
 

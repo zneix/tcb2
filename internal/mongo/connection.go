@@ -42,7 +42,7 @@ func (conn Connection) Connect() {
 
 	err := conn.client.Connect(ctx)
 	if err != nil {
-		defer log.Fatalln("[Mongo] Error connecting: " + err.Error())
+		log.Fatalln("[Mongo] Error connecting: " + err.Error())
 		return
 	}
 
