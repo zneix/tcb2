@@ -12,7 +12,7 @@ import (
 )
 
 // NewMongoConnection creates a new instance of mongo.Connection. Keep in mind that Connect() has to be called before using it
-func NewMongoConnection(cfg *config.TCBConfig, bgctx context.Context) *Connection {
+func NewMongoConnection(bgctx context.Context, cfg *config.TCBConfig) *Connection {
 	// Prepare mongo client's options
 	uri := fmt.Sprintf("mongodb://%s:%s", "localhost", cfg.MongoPort)
 	credentials := options.Credential{
