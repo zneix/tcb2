@@ -14,7 +14,7 @@ import (
 func eventSubIndex(esub *EventSub) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
-		w.Write([]byte("EventSub route index PauseManShit\n"))
+		_, _ = w.Write([]byte("EventSub route index PauseManShit\n"))
 	}
 }
 
@@ -47,7 +47,7 @@ func eventSubCallback(esub *EventSub) func(w http.ResponseWriter, r *http.Reques
 		// If a challenge is specified in request, respond to it
 		if notification.Challenge != "" {
 			w.Header().Set("Content-Type", "text/plain")
-			w.Write([]byte(notification.Challenge))
+			_, _ = w.Write([]byte(notification.Challenge))
 			return
 		}
 
