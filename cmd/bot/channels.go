@@ -71,12 +71,12 @@ var channelSubscriptions = []*eventsub.ChannelSubscription{
 // joinChannels performs startup actions for all the channels that are already loaded
 func joinChannels(tcb *bot.Bot) {
 	// TODO: Fetch channel information for all channels (in bulks of 100)
-	//var channelChunks [][]string
-	for ID := range tcb.Channels {
-		tcb.Helix.GetChannelInformation(&helix.GetChannelInformationParams{
-			BroadcasterID: ID,
-		})
-	}
+	// var channelChunks [][]string
+	// for ID := range tcb.Channels {
+	// tcb.Helix.GetChannelInformation(&helix.GetChannelInformationParams{
+	// BroadcasterID: ID,
+	// })
+	// }
 
 	for ID, channel := range tcb.Channels {
 		// Set the ID in map translating login names back to IDs
