@@ -114,6 +114,6 @@ func New() (cfg *TCBConfig) {
 
 	_ = v.UnmarshalExact(&cfg)
 
-	//fmt.Printf("%# v\n", cfg) // uncomment for debugging purposes
+	// fmt.Printf("%# v\n", cfg) // uncomment for debugging purposes
 	return
 }

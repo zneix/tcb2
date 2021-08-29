@@ -12,7 +12,6 @@ type Connection struct {
 	databaseName string
 }
 
-//const databaseName = "tcb2"
 type CollectionName string
 
 const (
