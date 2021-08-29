@@ -21,6 +21,7 @@ linters-settings:
       - unnamedResult
       - commentedOutCode
       - exitAfterDefer # TODO: Investigate re-enabling this one
+      - filepathJoin # Disabled due to FPs in config package
   funlen:
     lines: 200
     statements: 50
