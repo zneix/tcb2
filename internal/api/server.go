@@ -53,7 +53,6 @@ func mountRouter(server *Server) *chi.Mux {
 
 // Listen starts to listen on configured bindAddress (blocking)
 func (server *Server) Listen() {
-
 	srv := &http.Server{
 		Handler:      mountRouter(server),
 		Addr:         server.bindAddress,
