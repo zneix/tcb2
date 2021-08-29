@@ -36,6 +36,8 @@ type Channel struct {
 	Login string      `bson:"login"`
 	Mode  ChannelMode `bson:"mode"`
 
+	CurrentTitle string
+	CurrentGame  string
 	LastMsg      string
 	QueueChannel chan *QueueMessage
 }
