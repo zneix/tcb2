@@ -81,7 +81,7 @@ func init() {
 	pflag.Parse()
 }
 
-func New() (cfg TCBConfig) {
+func New() (cfg *TCBConfig) {
 	v := viper.New()
 
 	v.BindPFlags(pflag.CommandLine)

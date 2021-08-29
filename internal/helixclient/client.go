@@ -8,7 +8,7 @@ import (
 )
 
 // New returns a helix.Client that has requested an AppAccessToken and will keep it refreshed every 24h
-func New(cfg config.TCBConfig) (*helix.Client, error) {
+func New(cfg *config.TCBConfig) (*helix.Client, error) {
 	if cfg.TwitchClientID == "" {
 		return nil, errors.New("Twitch Client ID is missing, can't make Helix requests")
 	}

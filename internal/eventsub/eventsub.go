@@ -94,7 +94,7 @@ func (esub *EventSub) OnStreamOfflineEvent(callback func(event helix.EventSubStr
 	esub.onStreamOfflineEvent = callback
 }
 
-func New(cfg config.TCBConfig, apiServer *api.APIServer) *EventSub {
+func New(cfg *config.TCBConfig, apiServer *api.APIServer) *EventSub {
 	eventsub := &EventSub{
 		secret:      cfg.TwitchEventSubSecret,
 		callbackURL: strings.TrimSuffix(apiServer.BaseURL, "/") + "/eventsub/callback",

@@ -64,7 +64,7 @@ func (server *APIServer) Listen() {
 	log.Fatal(srv.ListenAndServe())
 }
 
-func New(cfg config.TCBConfig) *APIServer {
+func New(cfg *config.TCBConfig) *APIServer {
 	router := chi.NewRouter()
 
 	// Strip trailing slashes from API requests
