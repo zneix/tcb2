@@ -22,13 +22,13 @@ func registerEvents(tcb *bot.Bot) {
 	// PRIVMSG
 	tcb.TwitchIRC.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		// Ignore non-commands
-		if !strings.HasPrefix(message.Message, COMMAND_PREFIX) {
+		if !strings.HasPrefix(message.Message, COMMANDPREFIX) {
 			return
 		}
 
 		// Parse command name and arguments
 		args := strings.Fields(message.Message)
-		commandName := args[0][len(COMMAND_PREFIX):]
+		commandName := args[0][len(COMMANDPREFIX):]
 		args = args[1:]
 
 		// Try to find the command by its name and/or aliases

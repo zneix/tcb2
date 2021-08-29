@@ -15,8 +15,8 @@ import (
 )
 
 const (
-	VERSION        = "2.0-alpha"
-	COMMAND_PREFIX = "!"
+	VERSION       = "2.0-alpha"
+	COMMANDPREFIX = "!"
 )
 
 func main() {
