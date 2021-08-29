@@ -17,5 +17,5 @@ type CollectionName string
 const (
 	CollectionNameChannels = CollectionName("channels")
 	// TODO: Add handling for the (admin) users in the "users" collection
-	//CollectionNameUsers    = CollectionName("users")
+	// CollectionNameUsers    = CollectionName("users")
 )
