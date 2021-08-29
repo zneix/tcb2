@@ -42,8 +42,8 @@ func (conn Connection) Connect() {
 
 	err := conn.client.Connect(ctx)
 	if err != nil {
-		cancel()
-		log.Fatalln("[Mongo] Error connecting: " + err.Error())
+		defer log.Fatalln("[Mongo] Error connecting: " + err.Error())
+		return
 	}
 
 	err = conn.client.Ping(ctx, nil)
