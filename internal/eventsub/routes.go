@@ -11,7 +11,7 @@ import (
 )
 
 // eventSubIndex handles GET /eventsub
-func eventSubIndex(esub *EventSub, server *api.Server) func(w http.ResponseWriter, r *http.Request) {
+func eventSubIndex(esub *EventSub) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
 		w.Write([]byte("EventSub route index PauseManShit\n"))
@@ -19,7 +19,7 @@ func eventSubIndex(esub *EventSub, server *api.Server) func(w http.ResponseWrite
 }
 
 // eventSubCallback handles POST /eventsub/callback
-func eventSubCallback(esub *EventSub, server *api.Server) func(w http.ResponseWriter, r *http.Request) {
+func eventSubCallback(esub *EventSub) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := ioutil.ReadAll(r.Body)
 		if err != nil {
@@ -57,6 +57,6 @@ func eventSubCallback(esub *EventSub, server *api.Server) func(w http.ResponseWr
 }
 
 func (esub *EventSub) registerAPIRoutes(server *api.Server) {
-	server.Router.Get("/eventsub", eventSubIndex(esub, server))
-	server.Router.Post("/eventsub/callback", eventSubCallback(esub, server))
+	server.Router.Get("/eventsub", eventSubIndex(esub))
+	server.Router.Post("/eventsub/callback", eventSubCallback(esub))
 }
