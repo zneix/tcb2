@@ -1,0 +1,41 @@
+---
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        go: [1.16, 1.17]
+        os: [ubuntu-latest]
+
+    steps:
+      - uses: actions/setup-go@v2.1.4
+        with:
+          go-version: ${{ matrix.go }}
+
+      - uses: actions/checkout@v2.3.4
+
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...
+
+      - name: Build
+        run: go build -ldflags="-s -w" -v -o ../../build/tcb
+        working-directory: cmd/bot
+
+      - name: Test
+        run: go test -v ./...
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: tcb-${{ matrix.go }}-${{ matrix.os }}
+          path: build/tcb
