@@ -72,7 +72,6 @@ func registerEvents(tcb *bot.Bot) {
 			return
 		}
 
-		// First check user-type
 		userType, ok := message.Tags["user-type"]
 		switch {
 
