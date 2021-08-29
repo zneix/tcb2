@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gempir/go-twitch-irc/v2"
+	"github.com/nicklaw5/helix"
 	"github.com/zneix/tcb2/internal/bot"
 	"github.com/zneix/tcb2/internal/eventsub"
 	"github.com/zneix/tcb2/internal/mongo"
@@ -52,8 +53,31 @@ func loadChannels(bgctx context.Context, mongoConn *mongo.Connection, twitchIRC 
 	return channels
 }
 
+var channelSubscriptions = []*eventsub.ChannelSubscription{
+	{
+		Type:    "channel.update",
+		Version: "1",
+	},
+	{
+		Type:    "stream.online",
+		Version: "1",
+	},
+	{
+		Type:    "stream.offline",
+		Version: "1",
+	},
+}
+
 // joinChannels performs startup actions for all the channels that are already loaded
 func joinChannels(tcb *bot.Bot) {
+	// TODO: Fetch channel information for all channels (in bulks of 100)
+	//var channelChunks [][]string
+	for ID := range tcb.Channels {
+		tcb.Helix.GetChannelInformation(&helix.GetChannelInformationParams{
+			BroadcasterID: ID,
+		})
+	}
+
 	for ID, channel := range tcb.Channels {
 		// Set the ID in map translating login names back to IDs
 		tcb.Logins[channel.Login] = ID
@@ -61,31 +85,19 @@ func joinChannels(tcb *bot.Bot) {
 		// JOIN the channel
 		tcb.TwitchIRC.Join(channel.Login)
 
-		// Create EventSub subscriptions (but don't block)
+		// TODO: Assign data from stuff fetched earlier to the channel
+
+		// Putting API-based actions to a goroutine to make parallel loading faster
 		go func(channelID string) {
-			err := tcb.EventSub.CreateChannelSubscription(tcb.Helix, &eventsub.ChannelSubscription{
-				Type:      "channel.update",
-				Version:   "1",
-				ChannelID: channelID,
-			})
-			if err != nil {
-				log.Println("[EventSub] Failed to create a subscription: " + err.Error())
-			}
-			err = tcb.EventSub.CreateChannelSubscription(tcb.Helix, &eventsub.ChannelSubscription{
-				Type:      "stream.online",
-				Version:   "1",
-				ChannelID: channelID,
-			})
-			if err != nil {
-				log.Println("[EventSub] Failed to create a subscription: " + err.Error())
-			}
-			err = tcb.EventSub.CreateChannelSubscription(tcb.Helix, &eventsub.ChannelSubscription{
-				Type:      "stream.offline",
-				Version:   "1",
-				ChannelID: channelID,
-			})
-			if err != nil {
-				log.Println("[EventSub] Failed to create a subscription: " + err.Error())
+			// Create all EventSub subscriptions parallelly
+			for _, subscription := range channelSubscriptions {
+				go func(sub *eventsub.ChannelSubscription) {
+					sub.ChannelID = channelID
+					err := tcb.EventSub.CreateChannelSubscription(tcb.Helix, sub)
+					if err != nil {
+						log.Println("[EventSub] Failed to create a subscription: " + err.Error())
+					}
+				}(subscription)
 			}
 		}(channel.ID)
 	}

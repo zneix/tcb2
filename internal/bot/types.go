@@ -38,6 +38,7 @@ type Channel struct {
 
 	CurrentTitle string
 	CurrentGame  string
+	IsLive       bool
 	LastMsg      string
 	QueueChannel chan *QueueMessage
 }

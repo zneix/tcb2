@@ -104,18 +104,18 @@ func registerEvents(tcb *bot.Bot) {
 	// channel.update
 	tcb.EventSub.OnChannelUpdateEvent(func(event helix.EventSubChannelUpdateEvent) {
 		// TODO: Handle received event
-		log.Println("[EventSub:channel.update] %# v\n", event)
+		log.Printf("[EventSub:channel.update] %# v\n", event)
 	})
 
 	// stream.online
 	tcb.EventSub.OnStreamOnlineEvent(func(event helix.EventSubStreamOnlineEvent) {
 		// TODO: Handle received event
-		log.Println("[EventSub:stream.online] %# v\n", event)
+		log.Printf("[EventSub:stream.online] %# v\n", event)
 	})
 
 	// stream.offline
 	tcb.EventSub.OnStreamOfflineEvent(func(event helix.EventSubStreamOfflineEvent) {
 		// TODO: Handle received event
-		log.Println("[EventSub:stream.offline] %# v\n", event)
+		log.Printf("[EventSub:stream.offline] %# v\n", event)
 	})
 }
