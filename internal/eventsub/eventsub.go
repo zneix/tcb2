@@ -30,7 +30,7 @@ func (esub *EventSub) CreateChannelSubscription(helixClient *helix.Client, subsc
 	log.Printf("[EventSub] Create subscription response for %s: %# v\n", subscription, resp.Data)
 
 	// TODO: Properly handle pending status
-	//subscriptionsPending = append(subscriptionsPending, sub.ID)
+	// subscriptionsPending = append(subscriptionsPending, sub.ID)
 
 	return nil
 }
