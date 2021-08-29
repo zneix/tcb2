@@ -86,14 +86,12 @@ func registerEvents(tcb *bot.Bot) {
 					break
 				}
 			}
-
 		}
 
 		// Update ChannelMode in the current channel if it differs
 		if newMode != channel.Mode {
 			channel.ChangeMode(tcb.Mongo, newMode)
 		}
-
 	})
 
 	// Twitch EventSub events
