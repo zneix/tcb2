@@ -94,7 +94,10 @@ func registerEvents(tcb *bot.Bot) {
 
 		// Update ChannelMode in the current channel if it differs
 		if newMode != channel.Mode {
-			channel.ChangeMode(tcb.Mongo, newMode)
+			err := channel.ChangeMode(tcb.Mongo, newMode)
+			if err != nil {
+				log.Printf("Failed to change mode in %s: %s\n", channel, err)
+			}
 		}
 	})
 
