@@ -51,7 +51,7 @@ func eventSubCallback(esub *EventSub, server *api.APIServer) func(w http.Respons
 			return
 		}
 
-		esub.handleIncomingNotification(notification)
+		esub.handleIncomingNotification(&notification)
 		w.WriteHeader(http.StatusOK)
 	}
 }

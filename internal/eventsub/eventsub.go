@@ -35,7 +35,7 @@ func (esub *EventSub) CreateChannelSubscription(helixClient *helix.Client, subsc
 	return nil
 }
 
-func (esub *EventSub) handleIncomingNotification(notification eventSubNotification) {
+func (esub *EventSub) handleIncomingNotification(notification *eventSubNotification) {
 	switch notification.Subscription.Type {
 
 	case helix.EventSubTypeChannelUpdate:
