@@ -102,8 +102,7 @@ func New() (cfg *TCBConfig) {
 	if runtime.GOOS != "windows" {
 		configPaths = append(configPaths, filepath.Join("/etc", appName))
 	}
-	configPaths = append(configPaths, filepath.Join(xdgConfigHome, appName))
-	configPaths = append(configPaths, ".")
+	configPaths = append(configPaths, filepath.Join(xdgConfigHome, appName), ".")
 
 	mergeConfig(v, configPaths)
 
