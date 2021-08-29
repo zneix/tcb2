@@ -1,5 +1,5 @@
 lint:
-	@staticcheck ./...
+	@golangci-lint run
 
 build:
 	@cd cmd/bot && go build
