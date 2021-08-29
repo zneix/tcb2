@@ -82,7 +82,7 @@ const (
 	ChannelModeModerator
 	// ChannelModeVIP bot has elevated ratelimits without moderation permissions
 	// Note: we don't need this, but maybe it can be useful in the future
-	//ChannelModeVIP
+	// ChannelModeVIP
 
 	// ChannelModeEnumBoundary used mark the end of enumeration
 	ChannelModeEnumBoundary
