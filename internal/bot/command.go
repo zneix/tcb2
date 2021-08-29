@@ -1,9 +1,12 @@
 package bot
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 func (c *CommandController) GetCommand(alias string) (*Command, bool) {
-	name, ok := c.aliases[alias]
+	name, ok := c.aliases[strings.ToLower(alias)]
 	if !ok {
 		return nil, false
 	}
