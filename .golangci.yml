@@ -19,6 +19,7 @@ linters-settings:
       - style
     disabled-checks:
       - unnamedResult
+      - commentedOutCode
   funlen:
     lines: 200
     statements: 50
