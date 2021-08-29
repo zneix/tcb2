@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/gempir/go-twitch-irc/v2"
-	"github.com/nicklaw5/helix"
 	"github.com/zneix/tcb2/internal/bot"
 	"github.com/zneix/tcb2/internal/eventsub"
 	"github.com/zneix/tcb2/internal/mongo"
