@@ -51,6 +51,7 @@ func mountRouter(server *Server) *chi.Mux {
 	return ur
 }
 
+// Listen starts to listen on configured bindAddress (blocking)
 func (server *Server) Listen() {
 
 	srv := &http.Server{
