@@ -75,7 +75,7 @@ func CustomDurationString(diff time.Duration, numParts int, glue string) string 
 }
 
 func TimeSince(t2 time.Time) string {
-	t1 := time.Now()
+	// t1 := time.Now()
 	// return CustomRelTime(t1, t2, 2, " ")
-	return CustomDurationString(t1.Sub(t2), 3, " ")
+	return CustomDurationString(time.Since(t2), 3, " ")
 }
