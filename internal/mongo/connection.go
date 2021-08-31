@@ -63,6 +63,12 @@ func (conn Connection) Disconnect() {
 	log.Println("[Mongo] disconnected")
 }
 
+// Collection returns a collection with given name from the bot's main database specified in the config
 func (conn *Connection) Collection(name CollectionName) *mongo.Collection {
 	return conn.client.Database(conn.databaseName).Collection(string(name))
+}
+
+// CollectionSubs returns a collection that stores user's subscriptions to SubEvent events
+func (conn *Connection) CollectionSubs(channelID string) *mongo.Collection {
+	return conn.client.Database(conn.databaseName + "-subscriptions").Collection(channelID)
 }

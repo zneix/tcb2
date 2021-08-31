@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gempir/go-twitch-irc/v2"
@@ -35,26 +36,19 @@ type Channel struct {
 	ID    string `bson:"id"`
 	Login string `bson:"login"`
 
-	DisabledCommands   []string       `bson:"disabled_commands"`
-	Events             *ChannelEvents `bson:"events"`
-	PajbotAPI          *PajbotAPI     `bson:"pajbot_api"`
-	messageLengthLimit int            `bson:"message_length_limit"`
-	WhisperCommands    bool           `bson:"whisper_commands"`
-	Mode               ChannelMode    `bson:"mode"`
+	DisabledCommands   []string                `bson:"disabled_commands"`
+	Events             map[SubEventType]string `bson:"events"`
+	PajbotAPI          *PajbotAPI              `bson:"pajbot_api"`
+	messageLengthLimit int                     `bson:"message_length_limit"`
+	WhisperCommands    bool                    `bson:"whisper_commands"`
+	EventsOnlyOffline  bool                    `bson:"events_only_offline"`
+	Mode               ChannelMode             `bson:"mode"`
 
 	CurrentTitle string             `bson:"-"`
 	CurrentGame  string             `bson:"-"`
 	IsLive       bool               `bson:"-"`
 	LastMsg      string             `bson:"-"`
 	QueueChannel chan *QueueMessage `bson:"-"`
-}
-
-type ChannelEvents struct {
-	MessageGame    string `bson:"message_game"`
-	MessageTitle   string `bson:"message_title"`
-	MessageLive    string `bson:"message_live"`
-	MessageOffline string `bson:"message_offline"`
-	OfflineOnly    bool   `bson:"offline_only"`
 }
 
 type PajbotAPI struct {
@@ -82,6 +76,19 @@ type Command struct {
 type CommandController struct {
 	commands map[string]*Command
 	aliases  map[string]string
+}
+
+type SubEventSubscription struct {
+	UserLogin string       `bson:"user_login"`
+	UserID    string       `bson:"user_id"`
+	Event     SubEventType `bson:"event"`
+	Value     string       `bson:"value"`
+}
+
+type SubEventMessage struct {
+	Bot       *Bot
+	ChannelID string
+	Type      SubEventType
 }
 
 type QueueMessage struct {
@@ -141,3 +148,45 @@ const (
 	// PajbotAPIModeEnabled will attempt to sanitize potentially harmful message content
 	PajbotAPIModeEnabled
 )
+
+//
+// SubEventType defines event to which users can subscribe
+type SubEventType int
+
+const (
+	// SubEventTypeGame game (category) has been updated
+	// Received in EventSub's "channel.update"
+	SubEventTypeGame SubEventType = iota
+	// SubEventTypeTitle title has been updated
+	// Received in EventSub's "channel.update"
+	SubEventTypeTitle
+	// SubEventTypeLive channel has gone live
+	// Received in EventSub's "stream.online"
+	SubEventTypeLive
+	// EventLive channel has gone offline
+	// Received in EventSub's "stream.offline"
+	SubEventTypeOffline
+	// SubEventTypePartnered broadcaster has become partnered
+	// This is deprecated and is kept in case legacy subscriptions with this value are found
+	SubEventTypePartnered
+
+	// SubEventTypeInvalid represents an invalid event type that was passed to ParseChannelEvent
+	SubEventTypeInvalid
+)
+
+func (e SubEventType) String() string {
+	switch e {
+	case SubEventTypeGame:
+		return "game"
+	case SubEventTypeTitle:
+		return "title"
+	case SubEventTypeLive:
+		return "live"
+	case SubEventTypeOffline:
+		return "offline"
+	case SubEventTypePartnered:
+		return "partnered"
+	default:
+		return fmt.Sprintf("invalid(%d)", int(e))
+	}
+}

@@ -125,19 +125,52 @@ func registerEvents(tcb *bot.Bot) {
 
 	// channel.update
 	tcb.EventSub.OnChannelUpdateEvent(func(event helix.EventSubChannelUpdateEvent) {
-		// TODO: Handle received event
 		log.Printf("[EventSub:channel.update] %# v\n", event)
+		channel := tcb.Channels[event.BroadcasterUserID]
+
+		// Announce game change
+		if event.CategoryName != channel.CurrentGame {
+			go subEventTrigger(&bot.SubEventMessage{
+				Bot:       tcb,
+				ChannelID: event.BroadcasterUserID,
+				Type:      bot.SubEventTypeGame,
+			})
+		}
+		// Announce title change
+		if event.Title != channel.CurrentTitle {
+			go subEventTrigger(&bot.SubEventMessage{
+				Bot:       tcb,
+				ChannelID: event.BroadcasterUserID,
+				Type:      bot.SubEventTypeTitle,
+			})
+		}
 	})
 
 	// stream.online
 	tcb.EventSub.OnStreamOnlineEvent(func(event helix.EventSubStreamOnlineEvent) {
-		// TODO: Handle received event
 		log.Printf("[EventSub:stream.online] %# v\n", event)
+		channel := tcb.Channels[event.BroadcasterUserID]
+
+		channel.IsLive = true
+		// Announce channel going live
+		go subEventTrigger(&bot.SubEventMessage{
+			Bot:       tcb,
+			ChannelID: event.BroadcasterUserID,
+			Type:      bot.SubEventTypeLive,
+		})
 	})
 
 	// stream.offline
 	tcb.EventSub.OnStreamOfflineEvent(func(event helix.EventSubStreamOfflineEvent) {
-		// TODO: Handle received event
 		log.Printf("[EventSub:stream.offline] %# v\n", event)
+		channel := tcb.Channels[event.BroadcasterUserID]
+
+		channel.IsLive = false
+		// Announce channel going offline
+		go subEventTrigger(&bot.SubEventMessage{
+			Bot:       tcb,
+			ChannelID: event.BroadcasterUserID,
+			Type:      bot.SubEventTypeOffline,
+		})
 	})
 }
