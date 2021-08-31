@@ -99,6 +99,27 @@ func registerEvents(tcb *bot.Bot) {
 		}
 	})
 
+	// NOTICE
+	tcb.TwitchIRC.OnNoticeMessage(func(message twitch.NoticeMessage) {
+		channelID, ok := tcb.Logins[message.Channel]
+		if !ok {
+			// tcb.Logins map didn't have current channel's ID
+			// Note: this should realistically never occur though, but early exit to prevent panic
+			return
+		}
+		channel := tcb.Channels[channelID]
+
+		log.Printf("[TwitchIRC:NOTICE] %s in %s\n", message.MsgID, channel)
+
+		switch message.MsgID {
+		case "msg_banned":
+			fallthrough
+		case "msg_channel_suspended":
+			channel.ChangeMode(tcb.Mongo, bot.ChannelModeInactive)
+		default:
+		}
+	})
+
 	// Twitch EventSub events
 
 	// channel.update
