@@ -32,15 +32,34 @@ type Bot struct {
 }
 
 type Channel struct {
-	ID    string      `bson:"id"`
-	Login string      `bson:"login"`
-	Mode  ChannelMode `bson:"mode"`
+	ID    string `bson:"id"`
+	Login string `bson:"login"`
 
-	CurrentTitle string
-	CurrentGame  string
-	IsLive       bool
-	LastMsg      string
-	QueueChannel chan *QueueMessage
+	DisabledCommands   []string       `bson:"disabled_commands"`
+	Events             *ChannelEvents `bson:"events"`
+	PajbotAPI          *PajbotAPI     `bson:"pajbot_api"`
+	MessageLengthLimit int            `bson:"message_length_limit"`
+	WhisperCommands    bool           `bson:"whisper_commands"`
+	Mode               ChannelMode    `bson:"mode"`
+
+	CurrentTitle string             `bson:"-"`
+	CurrentGame  string             `bson:"-"`
+	IsLive       bool               `bson:"-"`
+	LastMsg      string             `bson:"-"`
+	QueueChannel chan *QueueMessage `bson:"-"`
+}
+
+type ChannelEvents struct {
+	MessageGame    string `bson:"message_game"`
+	MessageTitle   string `bson:"message_title"`
+	MessageLive    string `bson:"message_live"`
+	MessageOffline string `bson:"message_offline"`
+	OfflineOnly    bool   `bson:"offline_only"`
+}
+
+type PajbotAPI struct {
+	Mode   PajbotAPIMode `bson:"mode"`
+	Domain string        `bson:"domain"`
 }
 
 type Command struct {
@@ -110,3 +129,13 @@ func (mode ChannelMode) MessageLengthMax() int {
 	// For now I'm lazy and just gonna hardcode some reasonable value in here
 	return 468
 }
+
+// PajbotAPIMode ...
+type PajbotAPIMode int
+
+const (
+	// PajbotAPIModeDisabled even if the Domain link is set, API will be totally ignored
+	PajbotAPIModeDisabled PajbotAPIMode = iota
+	// PajbotAPIModeEnabled will attempt to sanitize potentially harmful message content
+	PajbotAPIModeEnabled
+)
