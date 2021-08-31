@@ -11,7 +11,7 @@ import (
 )
 
 func (esub *EventSub) CreateChannelSubscription(helixClient *helix.Client, subscription *ChannelSubscription) error {
-	resp, err := helixClient.CreateEventSubSubscription(&helix.EventSubSubscription{
+	_, err := helixClient.CreateEventSubSubscription(&helix.EventSubSubscription{
 		Type:    subscription.Type,
 		Version: subscription.Version,
 		Condition: helix.EventSubCondition{
@@ -27,7 +27,7 @@ func (esub *EventSub) CreateChannelSubscription(helixClient *helix.Client, subsc
 		return err
 	}
 
-	log.Printf("[EventSub] Create subscription response for %s: %# v\n", subscription, resp.Data)
+	// log.Printf("[EventSub] Create subscription response for %s: %# v\n", subscription, resp.Data)
 
 	// TODO: Properly handle pending status
 	// subscriptionsPending = append(subscriptionsPending, sub.ID)

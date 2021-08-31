@@ -130,7 +130,7 @@ func (mode ChannelMode) MessageLengthMax() int {
 	return 468
 }
 
-// PajbotAPIMode ...
+// PajbotAPIMode indicates bot's behavior regarding banphrase checks in channels that have pajbot API configured
 type PajbotAPIMode int
 
 const (

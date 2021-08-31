@@ -112,10 +112,11 @@ func registerEvents(tcb *bot.Bot) {
 		log.Printf("[TwitchIRC:NOTICE] %s in %s\n", message.MsgID, channel)
 
 		switch message.MsgID {
-		case "msg_banned":
-			fallthrough
-		case "msg_channel_suspended":
-			channel.ChangeMode(tcb.Mongo, bot.ChannelModeInactive)
+		case "msg_banned", "msg_channel_suspended":
+			err := channel.ChangeMode(tcb.Mongo, bot.ChannelModeInactive)
+			if err != nil {
+				log.Printf("Failed to change mode in %s: %s\n", channel, err)
+			}
 		default:
 		}
 	})
