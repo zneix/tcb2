@@ -36,8 +36,8 @@ func (channel *Channel) Send(message string) {
 	// TODO: Restrict usage of some commands, e.g. .ban, .timeout, .clear
 
 	// limitting message length to not get it dropped
-	if len(message) > channel.Mode.MessageLengthMax() {
-		message = message[0:channel.Mode.MessageLengthMax()-3] + "..."
+	if len(message) > channel.MessageLengthMax() {
+		message = message[0:channel.MessageLengthMax()-3] + "..."
 	}
 
 	// Append magic character at the end of the message if it's a duplicate
@@ -53,6 +53,23 @@ func (channel *Channel) Send(message string) {
 
 func (channel *Channel) String() string {
 	return fmt.Sprintf("#%s(%s)", channel.Login, channel.ID)
+}
+
+func (channel *Channel) MessageLengthMax() int {
+	if channel.messageLengthLimit > 0 {
+		return channel.messageLengthLimit
+	}
+
+	if channel.Mode == ChannelModeModerator {
+		// Leaving 2 characters for the magic character
+		return 498
+	}
+	// TODO: Investigate the actual limit for "pleb" modes (?)
+	// mm2pl: maybe it's something like max of count(CHAR) / len(msg) for each unique character used in a message
+	// mm2pl: or maybe it's some kind of GOW average
+	// mm2pl: max((msg.count(ch) / len(msg) for ch in set(msg))) seems like a good approximation
+	// For now I'm lazy and just gonna hardcode some reasonable value in here
+	return 468
 }
 
 func (channel *Channel) ChangeMode(mongoConn *mongo.Connection, newMode ChannelMode) (err error) {

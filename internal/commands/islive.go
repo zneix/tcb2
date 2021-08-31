@@ -17,7 +17,7 @@ func IsLive(tcb *bot.Bot) *bot.Command {
 		Run: func(msg twitch.PrivateMessage, args []string) {
 			channel := tcb.Channels[msg.RoomID]
 
-			var isLive bool = channel.IsLive
+			var isLive = channel.IsLive
 			if len(args) >= 1 {
 				targetID, ok := tcb.Logins[args[0]]
 				if !ok {

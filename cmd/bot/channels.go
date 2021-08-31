@@ -112,7 +112,7 @@ func handleChannelsChunk(tcb *bot.Bot, chunk []string) {
 		for _, subscription := range channelSubscriptions {
 			go func(sub eventsub.ChannelSubscription) {
 				sub.ChannelID = channel.ID
-				err := tcb.EventSub.CreateChannelSubscription(tcb.Helix, &sub)
+				err = tcb.EventSub.CreateChannelSubscription(tcb.Helix, &sub)
 				if err != nil {
 					log.Println("[EventSub] Failed to create a subscription: " + err.Error())
 				}
@@ -130,7 +130,8 @@ func handleChannelsChunk(tcb *bot.Bot, chunk []string) {
 		return
 	}
 
-	for _, respStream := range respS.Data.Streams {
+	for i := range respS.Data.Streams {
+		respStream := &respS.Data.Streams[i]
 		channel := tcb.Channels[respStream.UserID]
 
 		log.Printf("[Helix:GetStreams] %s %s\n", respStream.Type, channel)

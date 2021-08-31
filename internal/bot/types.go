@@ -38,7 +38,7 @@ type Channel struct {
 	DisabledCommands   []string       `bson:"disabled_commands"`
 	Events             *ChannelEvents `bson:"events"`
 	PajbotAPI          *PajbotAPI     `bson:"pajbot_api"`
-	MessageLengthLimit int            `bson:"message_length_limit"`
+	messageLengthLimit int            `bson:"message_length_limit"`
 	WhisperCommands    bool           `bson:"whisper_commands"`
 	Mode               ChannelMode    `bson:"mode"`
 
@@ -90,6 +90,7 @@ type QueueMessage struct {
 
 // enums
 
+//
 // ChannelMode indicates the bot's state in a Channel
 type ChannelMode int
 
@@ -104,17 +105,17 @@ const (
 	// Note: we don't need this, but maybe it can be useful in the future
 	// ChannelModeVIP
 
-	// ChannelModeEnumBoundary used mark the end of enumeration
+	// ChannelModeEnumBoundary marks the end of enumeration
 	ChannelModeEnumBoundary
 )
 
 // MessageRatelimit the minimum time.Duration that must pass between sending messages in the Channel
 func (mode ChannelMode) MessageRatelimit() time.Duration {
 	if mode == ChannelModeModerator {
-		// 1200ms is minimum, but 1650ms prevents exceeding global limits
-		return 1650 * time.Millisecond
+		return 100 * time.Millisecond
 	}
-	return 100 * time.Millisecond
+	// 1200ms is minimum, but 1650ms prevents exceeding global limits
+	return 1650 * time.Millisecond
 }
 
 func (mode ChannelMode) MessageLengthMax() int {
@@ -130,6 +131,7 @@ func (mode ChannelMode) MessageLengthMax() int {
 	return 468
 }
 
+//
 // PajbotAPIMode indicates bot's behavior regarding banphrase checks in channels that have pajbot API configured
 type PajbotAPIMode int
 
