@@ -84,8 +84,10 @@ func joinChannels(tcb *bot.Bot) {
 	}
 }
 
+// handleChannelsChunk performs startup actions for channels with IDs from chunk
 func handleChannelsChunk(tcb *bot.Bot, chunk []string) {
-	resp, err := tcb.Helix.GetChannelInformation(&helix.GetChannelInformationParams{
+	// Fetch Title & Game for all loaded channels
+	respC, err := tcb.Helix.GetChannelInformation(&helix.GetChannelInformationParams{
 		BroadcasterIDs: chunk,
 	})
 	if err != nil {
@@ -93,7 +95,7 @@ func handleChannelsChunk(tcb *bot.Bot, chunk []string) {
 		return
 	}
 
-	for _, respChannel := range resp.Data.Channels {
+	for _, respChannel := range respC.Data.Channels {
 		channel := tcb.Channels[respChannel.BroadcasterID]
 
 		// Set the ID in map translating login names back to IDs
@@ -115,6 +117,25 @@ func handleChannelsChunk(tcb *bot.Bot, chunk []string) {
 					log.Println("[EventSub] Failed to create a subscription: " + err.Error())
 				}
 			}(subscription)
+		}
+	}
+
+	// Fetch live status to check which channels out of loaded ones are live
+	respS, err := tcb.Helix.GetStreams(&helix.StreamsParams{
+		First:   100,
+		UserIDs: chunk,
+	})
+	if err != nil {
+		log.Printf("Failed to query stream chunk %s; channels: %v", err, chunk)
+		return
+	}
+
+	for _, respStream := range respS.Data.Streams {
+		channel := tcb.Channels[respStream.UserID]
+
+		log.Printf("[Helix:GetStreams] %s %s\n", respStream.Type, channel)
+		if respStream.Type == "live" {
+			channel.IsLive = true
 		}
 	}
 }
