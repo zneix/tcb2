@@ -10,4 +10,5 @@ func registerCommands(tcb *bot.Bot) {
 	tcb.Commands.RegisterCommand(commands.Bot(tcb))
 	tcb.Commands.RegisterCommand(commands.Game(tcb))
 	tcb.Commands.RegisterCommand(commands.Title(tcb))
+	tcb.Commands.RegisterCommand(commands.IsLive(tcb))
 }
