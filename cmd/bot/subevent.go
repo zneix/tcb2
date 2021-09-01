@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/zneix/tcb2/internal/bot"
+	"github.com/zneix/tcb2/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -57,17 +59,26 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 	}
 
 	// Construct ping message's "prefix"
-	messagePrefix := ".me " + strings.ReplaceAll(channel.Events[msg.Type], "{value}", value)
+	// Limit the length of a title / game in case it's too long, Twitch's limit is 140 anyway
+	messagePrefix := ".me " + strings.ReplaceAll(channel.Events[msg.Type], "{value}", utils.LimitString(value, 100))
 
 	// Prepare ping messages
 	msgsToSend := []string{messagePrefix}
-	for _, sub := range subs {
-		lastMsg := msgsToSend[len(msgsToSend)-1]
-		newMsg := fmt.Sprintf("%s %s", lastMsg, sub.UserLogin)
+	for i := 0; i < len(subs); i++ {
+		sub := subs[i]
+		newMsg := fmt.Sprintf("%s %s", msgsToSend[len(msgsToSend)-1], sub.UserLogin)
 
 		// Adding user to the message would exceed limit in the taget channel
-		if len(newMsg) > channel.MessageLengthMax() {
+		// We also want to re-run this event by decreasing i
+		if utf8.RuneCountInString(newMsg) > channel.MessageLengthMax() {
+			// We can't append any username to a message that is just our messagePrefix
+			// Loop has to be broken or otherwise it'll run forever
+			if msgsToSend[len(msgsToSend)-1] == messagePrefix {
+				log.Println(fmt.Sprintf("[SubEvent] messagePrefix might be too long (%d) in %s: %# v", utf8.RuneCountInString(messagePrefix), channel, messagePrefix))
+				break
+			}
 			msgsToSend = append(msgsToSend, messagePrefix)
+			i--
 			continue
 		}
 		// Otherwise it's good to append the username to message with pings
@@ -77,7 +88,7 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 	// Send messages to the target channel
 	// TODO: Pajbot API (?)
 	for i, v := range msgsToSend {
-		log.Printf("[SubEvent] Announcing %s in %s, %d/%d(%d chars)\n", msg.Type, channel, i+1, len(msgsToSend), len(v))
+		log.Printf("[SubEvent] Announcing %s in %s; %d/%d(%d/%d chars)\n", msg.Type, channel, i+1, len(msgsToSend), utf8.RuneCountInString(v), channel.MessageLengthMax())
 		channel.Send(v)
 	}
 }
