@@ -25,7 +25,7 @@ func Events(tcb *bot.Bot) *bot.Command {
 				eventStrings = append(eventStrings, fmt.Sprintf("%s (%s)", bot.SubEventType(i), desc))
 			}
 			// TODO: Export default command prefix to somewhere, e.g. config
-			channel.Send(fmt.Sprintf("@%s, available events: %s. Type \"%snotifyme <event> [optional value]\" to subscribe to an event!", msg.User.Name, strings.Join(eventStrings, ", "), tcb.Commands.Prefix))
+			channel.Send(fmt.Sprintf("@%s, available events: %s. Use \"%snotifyme <event> [optional value]\" to subscribe to an event!", msg.User.Name, strings.Join(eventStrings, ", "), tcb.Commands.Prefix))
 		},
 	}
 }

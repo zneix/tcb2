@@ -13,4 +13,5 @@ func registerCommands(tcb *bot.Bot) {
 	tcb.Commands.RegisterCommand(commands.IsLive(tcb))
 	tcb.Commands.RegisterCommand(commands.Events(tcb))
 	tcb.Commands.RegisterCommand(commands.Help(tcb))
+	tcb.Commands.RegisterCommand(commands.Subscribed(tcb))
 }
