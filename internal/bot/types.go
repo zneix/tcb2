@@ -125,19 +125,6 @@ func (mode ChannelMode) MessageRatelimit() time.Duration {
 	return 1650 * time.Millisecond
 }
 
-func (mode ChannelMode) MessageLengthMax() int {
-	if mode == ChannelModeModerator {
-		// Leaving 2 characters for the magic character
-		return 498
-	}
-	// TODO: Investigate the actual limit for "pleb" modes (?)
-	// mm2pl: maybe it's something like max of count(CHAR) / len(msg) for each unique character used in a message
-	// mm2pl: or maybe it's some kind of GOW average
-	// mm2pl: max((msg.count(ch) / len(msg) for ch in set(msg))) seems like a good approximation
-	// For now I'm lazy and just gonna hardcode some reasonable value in here
-	return 468
-}
-
 //
 // PajbotAPIMode indicates bot's behavior regarding banphrase checks in channels that have pajbot API configured
 type PajbotAPIMode int
