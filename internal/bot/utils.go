@@ -17,3 +17,12 @@ func ParseSubEventType(value string) (valid bool, event SubEventType) {
 		return false, SubEventTypeInvalid
 	}
 }
+
+// SubEventDescriptions slice with all currently supported events, indexed by the values of SubEventType
+// allowing to cast the index of a string in the slice to a corresponding SubEventType value
+var SubEventDescriptions = []string{
+	"when the game changes",          // SubEventTypeGame
+	"when the title changes",         // SubEventTypeTitle
+	"when the streamer goes live",    // SubEventTypeLive
+	"when the streamer goes offline", // SubEventTypeOffline
+}
