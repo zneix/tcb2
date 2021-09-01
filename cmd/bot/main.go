@@ -8,6 +8,7 @@ import (
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/zneix/tcb2/internal/api"
 	"github.com/zneix/tcb2/internal/bot"
+	"github.com/zneix/tcb2/internal/common"
 	"github.com/zneix/tcb2/internal/config"
 	"github.com/zneix/tcb2/internal/eventsub"
 	"github.com/zneix/tcb2/internal/helixclient"
@@ -15,12 +16,11 @@ import (
 )
 
 const (
-	VERSION       = "2.0-alpha"
 	COMMANDPREFIX = "!"
 )
 
 func main() {
-	log.Printf("Starting titlechange_bot v%s", VERSION)
+	log.Printf("Starting titlechange_bot %s", common.Version())
 
 	cfg := config.New()
 	ctx := context.Background()

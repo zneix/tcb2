@@ -6,6 +6,7 @@ import (
 
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/zneix/tcb2/internal/bot"
+	"github.com/zneix/tcb2/internal/common"
 )
 
 func Ping(tcb *bot.Bot) *bot.Command {
@@ -17,7 +18,7 @@ func Ping(tcb *bot.Bot) *bot.Command {
 		CooldownUser:    2 * time.Second,
 		Run: func(msg twitch.PrivateMessage, args []string) {
 			channel := tcb.Channels[msg.RoomID]
-			channel.Send(fmt.Sprintf("@%s, reporting for duty NaM 7", msg.User.Name))
+			channel.Send(fmt.Sprintf("@%s, reporting for duty MrDestructoid PowerUpR 🔔 %s", msg.User.Name, common.Version()))
 		},
 	}
 }
