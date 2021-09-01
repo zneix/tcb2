@@ -39,7 +39,7 @@ type Channel struct {
 	DisabledCommands   []string                `bson:"disabled_commands"`
 	Events             map[SubEventType]string `bson:"events"`
 	PajbotAPI          *PajbotAPI              `bson:"pajbot_api"`
-	messageLengthLimit int                     `bson:"message_length_limit"`
+	MessageLengthLimit int                     `bson:"message_length_limit"`
 	WhisperCommands    bool                    `bson:"whisper_commands"`
 	EventsOnlyOffline  bool                    `bson:"events_only_offline"`
 	Mode               ChannelMode             `bson:"mode"`

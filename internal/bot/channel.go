@@ -55,8 +55,8 @@ func (channel *Channel) String() string {
 }
 
 func (channel *Channel) MessageLengthMax() int {
-	if channel.messageLengthLimit > 0 {
-		return channel.messageLengthLimit
+	if channel.MessageLengthLimit > 0 {
+		return channel.MessageLengthLimit
 	}
 
 	if channel.Mode == ChannelModeModerator {
