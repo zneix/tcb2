@@ -8,6 +8,7 @@ import (
 
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/zneix/tcb2/internal/mongo"
+	"github.com/zneix/tcb2/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -36,9 +37,7 @@ func (channel *Channel) Send(message string) {
 	// TODO: Restrict usage of some commands, e.g. .ban, .timeout, .clear
 
 	// limitting message length to not get it dropped
-	if len(message) > channel.MessageLengthMax() {
-		message = message[0:channel.MessageLengthMax()-3] + "..."
-	}
+	message = utils.LimitString(message, channel.MessageLengthMax())
 
 	// Append magic character at the end of the message if it's a duplicate
 	if channel.LastMsg == message {
