@@ -13,6 +13,7 @@ func Title(tcb *bot.Bot) *bot.Command {
 		Name:            "title",
 		Aliases:         []string{"currenttitle"},
 		Description:     "Returns current title",
+		Usage:           "",
 		CooldownChannel: 3 * time.Second,
 		CooldownUser:    5 * time.Second,
 		Run: func(msg twitch.PrivateMessage, args []string) {

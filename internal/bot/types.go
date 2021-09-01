@@ -60,6 +60,7 @@ type Command struct {
 	Name        string
 	Aliases     []string
 	Description string
+	Usage       string
 	Run         func(msg twitch.PrivateMessage, args []string)
 
 	CooldownChannel time.Duration
@@ -68,13 +69,10 @@ type Command struct {
 	// TODO: Perhaps cooldown logic should be stored in Bot / redis (?)
 	LastExecutionChannel map[string]time.Time
 	LastExecutionUser    map[string]time.Time
-
-	// TODO properties:
-	// Usage string
 }
 
 type CommandController struct {
-	commands map[string]*Command
+	Commands map[string]*Command
 	aliases  map[string]string
 	Prefix   string
 }

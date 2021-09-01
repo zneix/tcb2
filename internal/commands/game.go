@@ -13,6 +13,7 @@ func Game(tcb *bot.Bot) *bot.Command {
 		Name:            "game",
 		Aliases:         []string{"currentgame"},
 		Description:     "Returns current game",
+		Usage:           "",
 		CooldownChannel: 3 * time.Second,
 		CooldownUser:    5 * time.Second,
 		Run: func(msg twitch.PrivateMessage, args []string) {

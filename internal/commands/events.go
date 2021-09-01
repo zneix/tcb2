@@ -14,6 +14,7 @@ func Events(tcb *bot.Bot) *bot.Command {
 		Name:            "events",
 		Aliases:         []string{"tcbevents"},
 		Description:     "Shows available events you can subscribe to with a brief description",
+		Usage:           "",
 		CooldownChannel: 3 * time.Second,
 		CooldownUser:    5 * time.Second,
 		Run: func(msg twitch.PrivateMessage, args []string) {
