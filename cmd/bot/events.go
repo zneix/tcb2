@@ -130,6 +130,7 @@ func registerEvents(tcb *bot.Bot) {
 
 		// Announce game change
 		if event.CategoryName != channel.CurrentGame {
+			channel.CurrentGame = event.CategoryName
 			go subEventTrigger(&bot.SubEventMessage{
 				Bot:       tcb,
 				ChannelID: event.BroadcasterUserID,
@@ -138,6 +139,7 @@ func registerEvents(tcb *bot.Bot) {
 		}
 		// Announce title change
 		if event.Title != channel.CurrentTitle {
+			channel.CurrentTitle = event.Title
 			go subEventTrigger(&bot.SubEventMessage{
 				Bot:       tcb,
 				ChannelID: event.BroadcasterUserID,
