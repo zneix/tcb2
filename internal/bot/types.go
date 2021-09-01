@@ -76,6 +76,7 @@ type Command struct {
 type CommandController struct {
 	commands map[string]*Command
 	aliases  map[string]string
+	Prefix   string
 }
 
 type SubEventSubscription struct {

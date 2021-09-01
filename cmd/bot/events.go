@@ -4,6 +4,7 @@ import (
 	"log"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/nicklaw5/helix"
@@ -22,13 +23,13 @@ func registerEvents(tcb *bot.Bot) {
 	// PRIVMSG
 	tcb.TwitchIRC.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		// Ignore non-commands
-		if !strings.HasPrefix(message.Message, COMMANDPREFIX) {
+		if !strings.HasPrefix(message.Message, tcb.Commands.Prefix) {
 			return
 		}
 
 		// Parse command name and arguments
 		args := strings.Fields(message.Message)
-		commandName := args[0][len(COMMANDPREFIX):]
+		commandName := args[0][utf8.RuneCountInString(tcb.Commands.Prefix):]
 		args = args[1:]
 
 		// Try to find the command by its name and/or aliases

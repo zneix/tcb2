@@ -27,9 +27,10 @@ func (c *CommandController) RegisterCommand(cmd *Command) {
 	}
 }
 
-func NewCommandController() *CommandController {
+func NewCommandController(prefix string) *CommandController {
 	return &CommandController{
 		commands: make(map[string]*Command),
 		aliases:  make(map[string]string),
+		Prefix:   prefix,
 	}
 }

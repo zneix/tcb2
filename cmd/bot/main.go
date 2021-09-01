@@ -15,10 +15,6 @@ import (
 	"github.com/zneix/tcb2/internal/mongo"
 )
 
-const (
-	COMMANDPREFIX = "!"
-)
-
 func main() {
 	log.Printf("Starting titlechange_bot %s", common.Version())
 
@@ -51,7 +47,7 @@ func main() {
 		EventSub:  esub,
 		Logins:    make(map[string]string),
 		Channels:  loadChannels(ctx, mongoConnection, twitchIRC),
-		Commands:  bot.NewCommandController(),
+		Commands:  bot.NewCommandController(cfg.CommandPrefix),
 		Self:      self,
 		StartTime: time.Now(),
 	}

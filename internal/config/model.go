@@ -1,6 +1,9 @@
 package config
 
 type TCBConfig struct {
+	// Misc
+	CommandPrefix string `mapstructure:"command-prefix"`
+
 	// API
 
 	BaseURL     string `mapstructure:"base-url"`
