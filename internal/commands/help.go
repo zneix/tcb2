@@ -44,7 +44,8 @@ func Help(tcb *bot.Bot) *bot.Command {
 				channel.Send(fmt.Sprintf("@%s, provided command is either hidden or doesn't exist BrokeBack", msg.User.Name))
 				return
 			}
-			channel.Send(fmt.Sprintf("@%s, %s (%s cooldown): %s", msg.User.Name, tcb.Commands.CommandString(cmd), cmd.CooldownUser, cmd.Description))
+			description := strings.ReplaceAll(cmd.Description, "{prefix}", tcb.Commands.Prefix)
+			channel.Send(fmt.Sprintf("@%s, %s (%s cooldown): %s", msg.User.Name, tcb.Commands.CommandString(cmd), cmd.CooldownUser, description))
 		},
 	}
 }
