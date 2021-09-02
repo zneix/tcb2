@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
@@ -34,18 +33,18 @@ func Help(tcb *bot.Bot) *bot.Command {
 					cmdStrings = append(cmdStrings, tcb.Commands.CommandString(cmd))
 				}
 
-				channel.Send(fmt.Sprintf("@%s, available commands: %s", msg.User.Name, strings.Join(cmdStrings, ", ")))
+				channel.Sendf("@%s, available commands: %s", msg.User.Name, strings.Join(cmdStrings, ", "))
 				return
 			}
 
 			// Dynamic help
 			cmd, exists := tcb.Commands.GetCommand(args[0])
 			if !exists {
-				channel.Send(fmt.Sprintf("@%s, provided command is either hidden or doesn't exist BrokeBack", msg.User.Name))
+				channel.Sendf("@%s, provided command is either hidden or doesn't exist BrokeBack", msg.User.Name)
 				return
 			}
 			description := strings.ReplaceAll(cmd.Description, "{prefix}", tcb.Commands.Prefix)
-			channel.Send(fmt.Sprintf("@%s, %s (%s cooldown): %s", msg.User.Name, tcb.Commands.CommandString(cmd), cmd.CooldownUser, description))
+			channel.Sendf("@%s, %s (%s cooldown): %s", msg.User.Name, tcb.Commands.CommandString(cmd), cmd.CooldownUser, description)
 		},
 	}
 }

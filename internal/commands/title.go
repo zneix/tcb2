@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gempir/go-twitch-irc/v2"
@@ -18,7 +17,7 @@ func Title(tcb *bot.Bot) *bot.Command {
 		CooldownUser:    5 * time.Second,
 		Run: func(msg twitch.PrivateMessage, args []string) {
 			channel := tcb.Channels[msg.RoomID]
-			channel.Send(fmt.Sprintf("@%s, current title: %s", msg.User.Name, channel.CurrentTitle))
+			channel.Sendf("@%s, current title: %s", msg.User.Name, channel.CurrentTitle)
 		},
 	}
 }

@@ -28,6 +28,7 @@ func (channel *Channel) StartMessageQueue(twitchIRC *twitch.Client) {
 	}
 }
 
+// Sends a message to the channel while taking care of ratelimits
 func (channel *Channel) Send(message string) {
 	// Don't attempt to send an empty message
 	if message == "" {
@@ -48,6 +49,11 @@ func (channel *Channel) Send(message string) {
 	channel.QueueChannel <- &QueueMessage{
 		Message: message,
 	}
+}
+
+// Sendf formats according to a format specifier and runs channel.Send with the resulting string
+func (channel *Channel) Sendf(format string, a ...interface{}) {
+	channel.Send(fmt.Sprintf(format, a...))
 }
 
 func (channel *Channel) String() string {
