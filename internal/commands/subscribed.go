@@ -32,6 +32,8 @@ func Subscribed(tcb *bot.Bot) *bot.Command {
 				return
 			}
 
+			// subMap contains indexes of subscriptions in the subs slice
+			subMap := make(map[bot.SubEventType][]int)
 			subs := []*bot.SubEventSubscription{}
 
 			// Fetch all relevant subscriptions
@@ -44,6 +46,7 @@ func Subscribed(tcb *bot.Bot) *bot.Command {
 					continue
 				}
 				subs = append(subs, sub)
+				subMap[sub.Event] = append(subMap[sub.Event], len(subs)-1)
 			}
 
 			// User isn't subscribed to anything, tell them how can they do that
@@ -58,7 +61,21 @@ func Subscribed(tcb *bot.Bot) *bot.Command {
 			}
 
 			// Inform the user about their subscriptions
-			channel.Send(fmt.Sprintf("@%s, you're subscribed to %d event(s): (TODO: List subscription details)", msg.User.Name, len(subs)))
+			parts := []string{}
+			for k, v := range subMap {
+				values := []string{}
+				for _, subIndex := range v {
+					if subs[subIndex].Value != "" {
+						values = append(values, fmt.Sprintf("\"%s\"", subs[subIndex].Value))
+					}
+				}
+				if len(values) == 0 {
+					parts = append(parts, fmt.Sprint(k))
+				} else {
+					parts = append(parts, fmt.Sprintf("%s (only for values: %s)", k, strings.Join(values, ", ")))
+				}
+			}
+			channel.Send(fmt.Sprintf("@%s, you're subscribed to %d event(s): %s", msg.User.Name, len(subs), strings.Join(parts, ", ")))
 		},
 	}
 }
