@@ -10,6 +10,8 @@ linters-settings:
   goconst:
     min-len: 2
     min-occurrences: 4
+  gocognit:
+    min-complexity: 50
   gocritic:
     enabled-tags:
       - diagnostic

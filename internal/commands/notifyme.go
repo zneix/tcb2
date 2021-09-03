@@ -72,11 +72,13 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 					continue
 				}
 
-				if sub.Event == event {
-					hasThisSub = true
-					if strings.EqualFold(sub.Value, value) {
-						hasThisSubWithThisValue = true
-					}
+				if sub.Event != event {
+					continue
+				}
+
+				hasThisSub = true
+				if strings.EqualFold(sub.Value, value) {
+					hasThisSubWithThisValue = true
 				}
 			}
 
