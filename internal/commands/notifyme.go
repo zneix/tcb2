@@ -10,6 +10,7 @@ import (
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/zneix/tcb2/internal/bot"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func NotifyMe(tcb *bot.Bot) *bot.Command {
@@ -31,7 +32,6 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 
 			// No arguments, return an error message
 			if len(args) < 1 {
-
 				channel.Sendf("@%s, you must specify an event to subscribe to. Available events: %s", msg.User.Name, availableEvents)
 				return
 			}
@@ -59,7 +59,6 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 				return
 			}
 
-			subs := []*bot.SubEventSubscription{}
 			hasThisSub := false
 			hasThisSubWithThisValue := false
 			var deletedSubCount int
@@ -67,7 +66,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			// Deserialize subscription data
 			for cur.Next(context.TODO()) {
 				var sub *bot.SubEventSubscription
-				err := cur.Decode(&sub)
+				err = cur.Decode(&sub)
 				if err != nil {
 					log.Println("[Mongo] Malformed subscription document: " + err.Error())
 					continue
@@ -79,7 +78,6 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 						hasThisSubWithThisValue = true
 					}
 				}
-				subs = append(subs, sub)
 			}
 
 			// User already has a subscription with the exact value
@@ -104,7 +102,8 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 
 				// User has subscription(s) for this event for non-empty values, but requested a subscription for all values
 				// Delete all previous subscriptions first
-				res, err := tcb.Mongo.CollectionSubs(msg.RoomID).DeleteMany(context.TODO(), &bot.SubEventSubscription{
+				var res *mongo.DeleteResult
+				res, err = tcb.Mongo.CollectionSubs(msg.RoomID).DeleteMany(context.TODO(), &bot.SubEventSubscription{
 					UserID: msg.User.ID,
 					Event:  event,
 				})
