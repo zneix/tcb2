@@ -23,7 +23,8 @@ func Subscribed(tcb *bot.Bot) *bot.Command {
 		Run: func(msg twitch.PrivateMessage, args []string) {
 			channel := tcb.Channels[msg.RoomID]
 
-			//
+			// Find all user's subscriptions in this chat
+			// TODO: Consider adding a way to check your subscriptions in other / all chats
 			cur, err := tcb.Mongo.CollectionSubs(msg.RoomID).Find(context.TODO(), bson.M{
 				"user_id": msg.User.ID,
 			})

@@ -26,7 +26,7 @@ func Help(tcb *bot.Bot) *bot.Command {
 		Run: func(msg twitch.PrivateMessage, args []string) {
 			channel := tcb.Channels[msg.RoomID]
 			// Generic help
-			if len(args) <= 0 {
+			if len(args) < 1 {
 				cmdStrings := []string{}
 
 				for _, cmd := range tcb.Commands.Commands {

@@ -11,8 +11,8 @@ func ParseSubEventType(value string) (valid bool, event SubEventType) {
 		return true, SubEventTypeLive
 	case "offline":
 		return true, SubEventTypeOffline
-	case "partnered":
-		return true, SubEventTypePartnered
+	// case "partnered":
+	// return true, SubEventTypePartnered
 	default:
 		return false, SubEventTypeInvalid
 	}
