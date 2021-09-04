@@ -14,6 +14,13 @@ import (
 
 // subEventTrigger will fetch relevant subscriptions and prepare ping messages, then attempt sending them in the channel where the event has occured
 func subEventTrigger(msg *bot.SubEventMessage) {
+	channel := msg.Bot.Channels[msg.ChannelID]
+
+	if channel.IsLive && channel.EventsOnlyOffline && msg.Type != bot.SubEventTypeLive {
+		log.Printf("[SubEvent] Skipped announcing %s in %s because channel is live\n", msg.Type, channel)
+		return
+	}
+
 	cur, err := msg.Bot.Mongo.CollectionSubs(msg.ChannelID).Find(context.TODO(), bson.M{
 		"event": msg.Type,
 	})
@@ -23,7 +30,6 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 	}
 
 	subs := []*bot.SubEventSubscription{}
-	channel := msg.Bot.Channels[msg.ChannelID]
 
 	// value is either new title or new game depending of the event
 	var value string

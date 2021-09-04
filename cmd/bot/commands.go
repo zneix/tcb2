@@ -16,4 +16,8 @@ func registerCommands(tcb *bot.Bot) {
 	tcb.Commands.RegisterCommand(commands.Subscribed(tcb))
 	tcb.Commands.RegisterCommand(commands.NotifyMe(tcb))
 	tcb.Commands.RegisterCommand(commands.RemoveMe(tcb))
+
+	// Migration commands, admin use only
+	// tcb.Commands.RegisterCommand(commands.MigrateChannels(tcb))
+	// tcb.Commands.RegisterCommand(commands.MigrateSubscriptions(tcb))
 }
