@@ -46,7 +46,7 @@ func registerEvents(tcb *bot.Bot) {
 		}
 
 		// Execute the command
-		command.Run(message, args)
+		go command.Run(message, args)
 
 		// Apply cooldown if user's permissions don't allow to skip it
 		// TODO: [Permissions] Don't apply user cooldowns to users that are allowed to skip it
