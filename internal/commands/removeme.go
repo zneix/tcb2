@@ -9,6 +9,7 @@ import (
 
 	"github.com/gempir/go-twitch-irc/v2"
 	"github.com/zneix/tcb2/internal/bot"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func RemoveMe(tcb *bot.Bot) *bot.Command {
@@ -45,13 +46,13 @@ func RemoveMe(tcb *bot.Bot) *bot.Command {
 			}
 
 			// If value is empty, remove the user from all subscriptions to this event
-			removeQuery := &bot.SubEventSubscription{
-				UserID: msg.User.ID,
-				Event:  event,
+			removeQuery := bson.M{
+				"user_id": msg.User.ID,
+				"event":   event,
 			}
 			// Otherwise, only remove subscriptions that match that value (case sensitive)
 			if value != "" {
-				removeQuery.Value = value
+				removeQuery["value"] = value
 			}
 			res, err := tcb.Mongo.CollectionSubs(msg.RoomID).DeleteMany(context.TODO(), removeQuery)
 			if err != nil {
@@ -59,7 +60,6 @@ func RemoveMe(tcb *bot.Bot) *bot.Command {
 				channel.Sendf("@%s, internal server error occured while trying to delete your subscriptions monkaS @zneix", msg.User.Name)
 				return
 			}
-			fmt.Printf("%# v\n", res)
 			log.Printf("[Mongo] Deleted %d subscription(s) for %# v(%s) in %s", res.DeletedCount, msg.User.Name, msg.User.ID, channel)
 
 			if res.DeletedCount == 0 {
@@ -73,7 +73,11 @@ func RemoveMe(tcb *bot.Bot) *bot.Command {
 				return
 			}
 
-			channel.Sendf("@%s, successfully removed %d subscription(s) to event %s", msg.User.Name, res.DeletedCount, event)
+			reply := fmt.Sprintf("@%s, successfully removed %d subscription(s) to event %s", msg.User.Name, res.DeletedCount, event)
+			if len(value) > 0 {
+				reply += ", but only for the provided value"
+			}
+			channel.Sendf(reply)
 		},
 	}
 }

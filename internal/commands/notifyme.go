@@ -60,6 +60,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			}
 
 			hasThisSub := false
+			hasThisSubAllValues := false
 			hasThisSubWithThisValue := false
 			var deletedSubCount int
 
@@ -77,6 +78,9 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 				}
 
 				hasThisSub = true
+				if sub.Value == "" {
+					hasThisSubAllValues = true
+				}
 				if strings.EqualFold(sub.Value, value) {
 					hasThisSubWithThisValue = true
 				}
@@ -90,41 +94,39 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 					reply += " with the provided value FeelsDankMan .."
 				}
 
-				channel.Sendf("%s. If you want to unsubscribe, use: %sremoveme live", reply, tcb.Commands.Prefix)
+				channel.Sendf("%s. If you want to unsubscribe, use: %sremoveme %s", reply, tcb.Commands.Prefix, event)
 				return
 			}
 
-			// User has a subscription to this event, but the value differs
-			if hasThisSub {
-				if len(value) > 0 {
-					// User has a subscription for this event for all values
-					channel.Sendf("@%s, you already have a subscription for event %s that matches all values. If you want to be pinged only on specific values, use \"%sremoveme %s\" first before running this command again", msg.User.Name, event, tcb.Commands.Prefix, event)
-					return
-				}
+			// User has a subscription for this event for all values
+			if hasThisSubAllValues && len(value) > 0 {
+				channel.Sendf("@%s, you already have a subscription for event %s that matches all values. If you want to be pinged only on specific values, use \"%sremoveme %s\" first before running this command again", msg.User.Name, event, tcb.Commands.Prefix, event)
+				return
+			}
 
-				// User has subscription(s) for this event for non-empty values, but requested a subscription for all values
-				// Delete all previous subscriptions first
+			// User has subscription(s) for this event, but requests a subscription for all values
+			// We want to delete all other subscriptions for this event for this user first
+			if hasThisSub && len(value) < 1 {
 				var res *mongo.DeleteResult
-				res, err = tcb.Mongo.CollectionSubs(msg.RoomID).DeleteMany(context.TODO(), &bot.SubEventSubscription{
-					UserID: msg.User.ID,
-					Event:  event,
+				res, err = tcb.Mongo.CollectionSubs(msg.RoomID).DeleteMany(context.TODO(), bson.M{
+					"user_id": msg.User.ID,
+					"event":   event,
 				})
 				if err != nil {
 					log.Println("[Mongo] Failed deleting subscriptions: " + err.Error())
 					channel.Sendf("@%s, internal server error occured while trying to delete your old subscriptions monkaS @zneix", msg.User.Name)
 					return
 				}
-
 				deletedSubCount = int(res.DeletedCount)
-				fmt.Printf("%# v\n", res)
 				log.Printf("[Mongo] Deleted %d subscription(s) for %# v(%s) in %s", res.DeletedCount, msg.User.Name, msg.User.ID, channel)
 			}
 
 			// Add requested subscription
-			res, err := tcb.Mongo.CollectionSubs(msg.RoomID).InsertOne(context.TODO(), &bot.SubEventSubscription{
-				UserID: msg.User.ID,
-				Event:  event,
-				Value:  value,
+			res, err := tcb.Mongo.CollectionSubs(msg.RoomID).InsertOne(context.TODO(), bot.SubEventSubscription{
+				UserID:    msg.User.ID,
+				UserLogin: msg.User.Name,
+				Event:     event,
+				Value:     value,
 			})
 			if err != nil {
 				log.Println("[Mongo] Failed adding new subscription: " + err.Error())
@@ -133,12 +135,17 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			}
 			log.Printf("[Mongo] Added 1 subscription for %# v(%s) in %s, ID: %v", msg.User.Name, msg.User.ID, channel, res.InsertedID)
 
-			reply := fmt.Sprintf("@%s, I will not ping you when the %s!", msg.User.Name, bot.SubEventDescriptions[event])
-			if hasThisSub {
+			var givenValue string
+			if len(value) > 0 {
+				givenValue = fmt.Sprintf(", but only when the %s contains provided value", event)
+			}
+			reply := fmt.Sprintf("@%s, I will now ping you when the %s%s!", msg.User.Name, bot.SubEventDescriptions[event], givenValue)
+			if hasThisSub && len(value) < 1 {
 				// We had to remove all other subscriptions for this event and add a new one
 				reply += fmt.Sprintf(" You previously had %d subscription(s) for this event that were set to only match specific values. These subscriptions have been removed and you will now be notified regardless of the value SeemsGood", deletedSubCount)
 			}
 
+			// Return the final message to the user
 			channel.Send(reply)
 		},
 	}

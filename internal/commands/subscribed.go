@@ -57,7 +57,7 @@ func Subscribed(tcb *bot.Bot) *bot.Command {
 				for i, desc := range bot.SubEventDescriptions {
 					eventStrings = append(eventStrings, fmt.Sprintf("%s (%s)", bot.SubEventType(i), desc))
 				}
-				channel.Sendf("@%s, you are not subscribed to any events. Use %s to subscribe to an event. Valid events: %s", msg.User.Name, "TODO: notifyme", strings.Join(eventStrings, ", "))
+				channel.Sendf("@%s, you are not subscribed to any events. Use %snotifyme to subscribe to an event. Valid events: %s", msg.User.Name, tcb.Commands.Prefix, strings.Join(eventStrings, ", "))
 				return
 			}
 
@@ -76,7 +76,7 @@ func Subscribed(tcb *bot.Bot) *bot.Command {
 					parts = append(parts, fmt.Sprintf("%s (only for values: %s)", k, strings.Join(values, ", ")))
 				}
 			}
-			channel.Sendf("@%s, you're subscribed to %d event(s): %s", msg.User.Name, len(subs), strings.Join(parts, ", "))
+			channel.Sendf("@%s, you have %d subscription(s) to %d event(s): %s", msg.User.Name, len(subMap), len(subs), strings.Join(parts, ", "))
 		},
 	}
 }
