@@ -76,7 +76,7 @@ func Subscribed(tcb *bot.Bot) *bot.Command {
 					parts = append(parts, fmt.Sprintf("%s (only for values: %s)", k, strings.Join(values, ", ")))
 				}
 			}
-			channel.Sendf("@%s, you have %d subscription(s) to %d event(s): %s", msg.User.Name, len(subMap), len(subs), strings.Join(parts, ", "))
+			channel.Sendf("@%s, you have %d subscription(s) to %d event(s): %s", msg.User.Name, len(subs), len(subMap), strings.Join(parts, ", "))
 		},
 	}
 }
