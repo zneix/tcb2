@@ -38,6 +38,14 @@ func registerEvents(tcb *bot.Bot) {
 			return
 		}
 
+		// Skip command execution if it's disabled in the target channel
+		channel := tcb.Channels[message.RoomID]
+		for _, cmdName := range channel.DisabledCommands {
+			if command.Name == cmdName {
+				return
+			}
+		}
+
 		// TODO: [Permissions] Check if user is allowed to execute the command
 
 		// Check if channel or user is on cooldown
