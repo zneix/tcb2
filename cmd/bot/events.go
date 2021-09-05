@@ -17,6 +17,7 @@ func registerEvents(tcb *bot.Bot) {
 	// Authenticated with IRC
 	tcb.TwitchIRC.OnConnect(func() {
 		log.Println("[TwitchIRC] connected")
+		tcb.Self.JoinChannel(tcb.TwitchIRC)
 		joinChannels(tcb)
 	})
 
@@ -36,6 +37,22 @@ func registerEvents(tcb *bot.Bot) {
 		command, exists := tcb.Commands.GetCommand(commandName)
 		if !exists {
 			return
+		}
+
+		// This will only run in bot's own channel
+		if message.Channel == tcb.Self.Login {
+			// Re-add handling of commands here once bot.Bot.Channels is a proper ChannelController
+			// For now, we need to return here, because in all the commands, the channel variable will be nil and process will eventually crash
+			return
+			// Skip command execution if IgnoreSelf is true
+			// if command.IgnoreSelf {
+			// //
+			// tcb.Self.Channel.Sendf("@%s, don't you think it's a bit silly to use this command in bot's own channel? FeelsDankMan ...", message.User.Name)
+			// command.LastExecutionChannel[message.RoomID] = time.Now()
+			// return
+			// }
+
+			// TODO: Put the block below in the } else { block - We don't want this part to run in bot's own channel
 		}
 
 		// Skip command execution if it's disabled in the target channel

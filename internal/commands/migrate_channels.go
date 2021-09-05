@@ -13,6 +13,7 @@ func MigrateChannels(tcb *bot.Bot) *bot.Command {
 		Aliases:         []string{},
 		Description:     "Migration command, admin use only",
 		Usage:           "",
+		IgnoreSelf:      false,
 		CooldownChannel: 3 * time.Second,
 		CooldownUser:    5 * time.Second,
 		Run: func(msg twitch.PrivateMessage, args []string) {

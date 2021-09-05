@@ -19,6 +19,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 		Aliases:         []string{"tcbnotifyme"},
 		Description:     "Subscribe to an event. Optional value can be only used with title and game events. For list of available events use: {prefix}events",
 		Usage:           "<event> [optional value]",
+		IgnoreSelf:      true,
 		CooldownChannel: 1 * time.Second,
 		CooldownUser:    5 * time.Second,
 		Run: func(msg twitch.PrivateMessage, args []string) {

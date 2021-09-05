@@ -13,7 +13,7 @@ import (
 )
 
 func (channel *Channel) StartMessageQueue(twitchIRC *twitch.Client) {
-	// log.Println("Starting message queue for " + channel.String())
+	log.Println("Starting message queue for " + channel.String())
 	defer log.Println("[Channel] Message queue suddenly quit(?) for " + channel.String())
 
 	for message := range channel.QueueChannel {

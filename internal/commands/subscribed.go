@@ -18,6 +18,7 @@ func Subscribed(tcb *bot.Bot) *bot.Command {
 		Aliases:         []string{"tcbsubscribed"},
 		Description:     "Shows you list of events you're subscribed to",
 		Usage:           "",
+		IgnoreSelf:      true,
 		CooldownChannel: 3 * time.Second,
 		CooldownUser:    5 * time.Second,
 		Run: func(msg twitch.PrivateMessage, args []string) {

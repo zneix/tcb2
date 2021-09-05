@@ -15,10 +15,9 @@ import (
 // subEventTrigger will fetch relevant subscriptions and prepare ping messages, then attempt sending them in the channel where the event has occured
 func subEventTrigger(msg *bot.SubEventMessage) {
 	channel := msg.Bot.Channels[msg.ChannelID]
-
-	if channel.IsLive && channel.EventsOnlyOffline && msg.Type != bot.SubEventTypeLive {
-		log.Printf("[SubEvent] Skipped announcing %s in %s because channel is live\n", msg.Type, channel)
-		return
+	// TODO: Change this once bot.Bot.Channels becomes a proper ChannelController
+	if channel == nil {
+		channel = msg.Bot.Self.Channel
 	}
 
 	cur, err := msg.Bot.Mongo.CollectionSubs(msg.ChannelID).Find(context.TODO(), bson.M{
@@ -66,7 +65,14 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 
 	// Construct ping message's "prefix"
 	// Limit the length of a title / game in case it's too long, Twitch's limit is 140 anyway
-	messagePrefix := ".me " + strings.ReplaceAll(channel.Events[msg.Type], "{value}", utils.LimitString(value, 100))
+	messagePrefix := strings.ReplaceAll(channel.Events[msg.Type], "{value}", utils.LimitString(value, 100))
+
+	// Prepend the "[#channel]" part if the message is redirected from a channel
+	// that is currently live and has EventsOnlyOffline flag set to true
+	if channel.IsLive && channel.EventsOnlyOffline && msg.Type != bot.SubEventTypeLive {
+		messagePrefix = fmt.Sprintf("[#%s] ", channel.Login)
+	}
+	messagePrefix = ".me " + messagePrefix
 
 	// Prepare ping messages
 	msgsToSend := []string{messagePrefix}

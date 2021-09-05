@@ -13,6 +13,7 @@ func Bot(tcb *bot.Bot) *bot.Command {
 		Aliases:         []string{"tcb", "about", "titlechangebot", "titlechange_bot"},
 		Description:     "Returns basic information about the bot",
 		Usage:           "",
+		IgnoreSelf:      false,
 		CooldownChannel: 3 * time.Second,
 		CooldownUser:    5 * time.Second,
 		Run: func(msg twitch.PrivateMessage, args []string) {

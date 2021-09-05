@@ -13,6 +13,7 @@ func IsLive(tcb *bot.Bot) *bot.Command {
 		Aliases:         []string{"tcbislive"},
 		Description:     "Shows you if the channel is live or not",
 		Usage:           "",
+		IgnoreSelf:      true,
 		CooldownChannel: 3 * time.Second,
 		CooldownUser:    5 * time.Second,
 		Run: func(msg twitch.PrivateMessage, args []string) {

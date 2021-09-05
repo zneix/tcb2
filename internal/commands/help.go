@@ -21,6 +21,7 @@ func Help(tcb *bot.Bot) *bot.Command {
 		},
 		Description:     "Posts a short list of commands or details about specified command",
 		Usage:           "[command]",
+		IgnoreSelf:      false,
 		CooldownChannel: 100 * time.Millisecond,
 		CooldownUser:    2 * time.Second,
 		Run: func(msg twitch.PrivateMessage, args []string) {

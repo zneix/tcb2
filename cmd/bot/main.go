@@ -35,11 +35,6 @@ func main() {
 
 	esub := eventsub.New(cfg, apiServer)
 
-	self := &bot.Self{
-		Login: cfg.TwitchLogin,
-		OAuth: cfg.TwitchOAuth,
-	}
-
 	tcb := &bot.Bot{
 		TwitchIRC: twitchIRC,
 		Mongo:     mongoConnection,
@@ -48,7 +43,7 @@ func main() {
 		Logins:    make(map[string]string),
 		Channels:  loadChannels(ctx, mongoConnection, twitchIRC),
 		Commands:  bot.NewCommandController(cfg.CommandPrefix),
-		Self:      self,
+		Self:      bot.NewSelf(cfg, twitchIRC),
 		StartTime: time.Now(),
 	}
 

@@ -14,8 +14,9 @@ import (
 
 // Self contains properties related to bot's user account
 type Self struct {
-	Login string
-	OAuth string
+	Login   string
+	OAuth   string
+	Channel *Channel
 }
 
 type Bot struct {
@@ -26,6 +27,7 @@ type Bot struct {
 
 	Logins   map[string]string
 	Channels map[string]*Channel
+	// TODO: Make a proper ChannelController for Bot.Channels and make it handle bot's own channel properly
 	Commands *CommandController
 
 	Self      *Self
@@ -61,6 +63,7 @@ type Command struct {
 	Aliases     []string
 	Description string
 	Usage       string
+	IgnoreSelf  bool
 	Run         func(msg twitch.PrivateMessage, args []string)
 
 	CooldownChannel time.Duration
