@@ -40,8 +40,8 @@ func registerEvents(tcb *bot.Bot) {
 
 		// Skip command execution if it's disabled in the target channel
 		channel := tcb.Channels[message.RoomID]
-		for _, cmdName := range channel.DisabledCommands {
-			if command.Name == cmdName {
+		for _, disabledCmdName := range channel.DisabledCommands {
+			if commandName == disabledCmdName {
 				return
 			}
 		}
