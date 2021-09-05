@@ -39,7 +39,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			// Parse sub event type passed as the first argument
 			valid, event := bot.ParseSubEventType(strings.ToLower(args[0]))
 			if !valid {
-				channel.Sendf("@%s, given event name is not valid. %s", msg.User.Name, "TODO: show all events you can subscribe to")
+				channel.Sendf("@%s, given event name is not valid. Available events: %s", msg.User.Name, availableEvents)
 				return
 			}
 
