@@ -40,6 +40,8 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 		value = channel.CurrentTitle
 	}
 
+	valueLower := strings.ToLower(value)
+
 	// Fetch all relevant subscriptions
 	for cur.Next(context.TODO()) {
 		// Deserialize sub data
@@ -52,7 +54,7 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 
 		// Ignore subscriptions based on the value (if its present)
 		if msg.Type == bot.SubEventTypeGame || msg.Type == bot.SubEventTypeTitle {
-			if sub.Value != "" && !strings.Contains(value, sub.Value) {
+			if sub.Value != "" && !strings.Contains(valueLower, strings.ToLower(sub.Value)) {
 				continue
 			}
 		}
