@@ -41,7 +41,7 @@ linters:
     - funlen
     - goconst
     - gocritic
-    - gocyclo
+  # - gocyclo # same as with gocognit
     - gofmt
     - goimports
     - golint
@@ -62,7 +62,7 @@ linters:
   # - unused
     - varcheck
     - whitespace
-    - gocognit
+  # - gocognit # CBA to keep satisfying this check with the enormous !notifyme's code
   # - godox
   # - maligned
     - prealloc

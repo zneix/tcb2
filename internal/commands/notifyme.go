@@ -37,7 +37,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			}
 
 			// Special case - subscribe to all the events
-			if strings.ToLower(args[0]) == "all" {
+			if strings.EqualFold(args[0], "all") {
 				// Unsubscribe the user from any events that they could've been subscribed to before
 				resDel, err := tcb.Mongo.CollectionSubs(msg.RoomID).DeleteMany(context.TODO(), bson.M{
 					"user_id": msg.User.ID,
