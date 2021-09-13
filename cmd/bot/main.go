@@ -16,6 +16,10 @@ import (
 	"github.com/zneix/tcb2/internal/supinicapi"
 )
 
+func init() {
+	log.SetFlags(log.Flags() | log.Lmicroseconds)
+}
+
 func main() {
 	log.Printf("Starting titlechange_bot %s", common.Version())
 
