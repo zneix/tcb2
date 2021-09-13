@@ -13,6 +13,7 @@ import (
 	"github.com/zneix/tcb2/internal/eventsub"
 	"github.com/zneix/tcb2/internal/helixclient"
 	"github.com/zneix/tcb2/internal/mongo"
+	"github.com/zneix/tcb2/internal/supinicapi"
 )
 
 func main() {
@@ -59,6 +60,10 @@ func main() {
 	// TODO: Manage goroutines below and (currently blocking) Connect() with sync.WaitGroup
 	// Listen on the API instance
 	go apiServer.Listen()
+
+	// Ping Supinic's API periodically to signal that bot is alive
+	supinic := supinicapi.New(cfg.SupinicAPIKey)
+	go supinic.UpdateAliveStatus()
 
 	err = tcb.TwitchIRC.Connect()
 	if err != nil {

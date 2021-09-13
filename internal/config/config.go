@@ -60,8 +60,11 @@ func mergeConfig(v *viper.Viper, configPaths []string) {
 func init() {
 	// Define command-line flags and default values
 
-	// Misc
+	// Bot
 	pflag.String("command-prefix", "!", "Command prefix to which bot will respond to")
+
+	// Misc
+	pflag.String("supinic-api-key", "", "titlechange_bot's key to the Supinic's API, in the format: \"SupibotID:APIKey\" without quotation marks")
 
 	// API
 	pflag.StringP("base-url", "b", "", "Base URL of the API to which clients will make their requests. Useful if the API is proxied through reverse proxy like nginx. Value needs to contain full URL with protocol scheme, e.g. https://braize.pajlada.com/chatterino")
