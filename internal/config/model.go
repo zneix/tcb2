@@ -1,8 +1,13 @@
 package config
 
 type TCBConfig struct {
-	// Misc
+	// Bot
+
 	CommandPrefix string `mapstructure:"command-prefix"`
+
+	// Misc
+
+	SupinicAPIKey string `mapstructure:"supinic-api-key"`
 
 	// API
 
