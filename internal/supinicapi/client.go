@@ -23,7 +23,7 @@ func New(supinicAPIKey string) *Client {
 func (c *Client) requestAliveStatus() {
 	req, err := http.NewRequest("PUT", "https://supinic.com/api/bot-program/bot/active", nil)
 	if err != nil {
-		log.Printf("[SupinicAPI] Error creating API reqeust: %s\n", err)
+		log.Printf("[SupinicAPI] Error creating API request: %s\n", err)
 		return
 	}
 	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", c.apiKey))
