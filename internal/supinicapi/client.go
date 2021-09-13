@@ -7,11 +7,13 @@ import (
 	"time"
 )
 
+// Client represents a Supinic's API wrapper
 type Client struct {
 	apiKey     string
 	httpClient *http.Client
 }
 
+// New creates a new Client instance, requires a
 func New(supinicAPIKey string) *Client {
 	return &Client{
 		apiKey:     supinicAPIKey,
@@ -35,11 +37,16 @@ func (c *Client) requestAliveStatus() {
 	}
 	defer res.Body.Close()
 
-	log.Println(res)
-	log.Printf("[SupinicAPI] Successfully updated alive status")
+	log.Printf("[SupinicAPI] Pinged alive endpoint, status: %d\n", res.StatusCode)
 }
 
+// UpdateAliveStatus starts routine updating alive status on Supinic's API right away and every 15 minutes
 func (c *Client) UpdateAliveStatus() {
+	if c.apiKey == "" {
+		log.Println("[SupinicAPI] API key is empty, won't make API requests")
+		return
+	}
+
 	c.requestAliveStatus()
 
 	// Make the API request every 15 minutes
