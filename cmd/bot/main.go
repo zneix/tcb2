@@ -36,7 +36,7 @@ func main() {
 		log.Fatalf("[Helix] Error while initializing client: %s\n", err)
 	}
 
-	apiServer := api.New(cfg)
+	apiServer := api.New(cfg, helixClient)
 
 	esub := eventsub.New(cfg, apiServer)
 

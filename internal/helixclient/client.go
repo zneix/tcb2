@@ -19,6 +19,7 @@ func New(cfg *config.TCBConfig) (*helix.Client, error) {
 	client, err := helix.NewClient(&helix.Options{
 		ClientID:     cfg.TwitchClientID,
 		ClientSecret: cfg.TwitchClientSecret,
+		RedirectURI:  cfg.BaseURL + "/auth/callback",
 	})
 	if err != nil {
 		return nil, err

@@ -4,11 +4,17 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/nicklaw5/helix"
 	"github.com/zneix/tcb2/internal/config"
+)
+
+const (
+	authCallbackRoute = "/auth/callback"
 )
 
 type Server struct {
@@ -23,6 +29,9 @@ type Server struct {
 
 	// listenPrefix ...
 	listenPrefix string
+
+	// twitchLoginURI ...
+	twitchLoginURI string
 
 	startTime time.Time
 }
@@ -64,22 +73,43 @@ func (server *Server) Listen() {
 	log.Fatal(srv.ListenAndServe())
 }
 
-func New(cfg *config.TCBConfig) *Server {
+func New(cfg *config.TCBConfig, helixClient *helix.Client) *Server {
 	router := chi.NewRouter()
 
 	// Strip trailing slashes from API requests
 	router.Use(middleware.StripSlashes)
 
+	// Apply the RedirectURI to helixClient
+	redirectURI := cfg.BaseURL + authCallbackRoute
+	helixClient.SetRedirectURI(redirectURI)
+
+	// Figure out twitchLoginURI
+	const responseType = "code"
+	const forceVerify = "true"
+	encodedScopes := url.PathEscape(strings.Join(scopes, " "))
+
+	twitchLoginURL, _ := url.Parse("https://id.twitch.tv/oauth2/authorize")
+	twitchLoginURLVariables := &url.Values{}
+	twitchLoginURLVariables.Set("client_id", cfg.TwitchClientID)
+	twitchLoginURLVariables.Set("redirect_uri", redirectURI)
+	twitchLoginURLVariables.Set("response_type", responseType)
+	twitchLoginURLVariables.Set("scope", encodedScopes)
+	twitchLoginURLVariables.Set("force_verify", forceVerify)
+	twitchLoginURL.RawQuery = twitchLoginURLVariables.Encode()
+
+	// Create new Server instance
 	server := &Server{
-		Router:       router,
-		BaseURL:      cfg.BaseURL,
-		bindAddress:  cfg.BindAddress,
-		listenPrefix: "/",
-		startTime:    time.Now(),
+		Router:         router,
+		BaseURL:        cfg.BaseURL,
+		bindAddress:    cfg.BindAddress,
+		listenPrefix:   "/",
+		startTime:      time.Now(),
+		twitchLoginURI: twitchLoginURL.String(),
 	}
 
 	// Handle routes
-	registerMainRoutes(server)
+	registerMainRoutes(server, helixClient)
+	registerFrontendRoutes(server, cfg)
 
 	return server
 }
