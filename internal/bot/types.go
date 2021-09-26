@@ -77,6 +77,13 @@ type CommandController struct {
 	Prefix   string
 }
 
+// SubEventMOTD if present for a channel with the corresponding ChannelID, should be posted right after announcing channel going live
+// It could be useful to remind streamer to tweet or announce going live on Discord
+type SubEventMOTD struct {
+	ChannelID string `bson:"channel_id"`
+	Message   string `bson:"message"`
+}
+
 type SubEventSubscription struct {
 	UserLogin string       `bson:"user_login"`
 	UserID    string       `bson:"user_id"`

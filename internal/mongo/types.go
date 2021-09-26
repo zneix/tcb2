@@ -16,6 +16,7 @@ type CollectionName string
 
 const (
 	CollectionNameChannels = CollectionName("channels")
+	CollectionNameMOTDs    = CollectionName("motds")
 
 	// Migration collections
 	// CollectionNameChannels         = CollectionName("new-channels") // Temporary coll with new channels
