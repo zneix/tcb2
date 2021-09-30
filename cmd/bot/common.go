@@ -4,7 +4,7 @@ import "github.com/zneix/tcb2/internal/common"
 
 var (
 	buildTime    string
-	buildVersion string = "v2.0-rc1"
+	buildVersion string = "dev"
 	buildHash    string
 	buildBranch  string
 )
