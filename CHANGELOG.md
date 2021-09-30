@@ -2,6 +2,9 @@
 
 ## Unversioned
 
+## 2.0-rc2
+
+- Minor: Reimplemented channel MOTDs. (#10)
 - Minor: Added a way to subscribe to all events at once with `!notifyme all`.
 - Minor: List all available events in `!notifyme` command.
 - Minor: Reimplemented respecting of disabled command.
