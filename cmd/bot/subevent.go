@@ -105,7 +105,7 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 	handleMOTD(msg)
 }
 
-// handleMOTD queries MOTD for the channel where event occured and sends it if exists
+// handleMOTD queries MOTD for the channel where event occurred and sends it if exists
 func handleMOTD(msg *bot.SubEventMessage) {
 	// By design, it is only sent on live event
 	if msg.Type != bot.SubEventTypeLive {
