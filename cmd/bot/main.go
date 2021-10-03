@@ -13,7 +13,12 @@ import (
 	"github.com/zneix/tcb2/internal/eventsub"
 	"github.com/zneix/tcb2/internal/helixclient"
 	"github.com/zneix/tcb2/internal/mongo"
+	"github.com/zneix/tcb2/internal/supinicapi"
 )
+
+func init() {
+	log.SetFlags(log.Flags() | log.Lmicroseconds)
+}
 
 func main() {
 	log.Printf("Starting titlechange_bot %s", common.Version())
@@ -25,6 +30,7 @@ func main() {
 	mongoConnection.Connect()
 
 	twitchIRC := twitch.NewClient(cfg.TwitchLogin, "oauth:"+cfg.TwitchOAuth)
+	twitchIRC.SetRateLimiter(twitch.CreateVerifiedRateLimiter())
 
 	helixClient, err := helixclient.New(cfg)
 	if err != nil {
@@ -54,6 +60,10 @@ func main() {
 	// TODO: Manage goroutines below and (currently blocking) Connect() with sync.WaitGroup
 	// Listen on the API instance
 	go apiServer.Listen()
+
+	// Ping Supinic's API periodically to signal that bot is alive
+	supinic := supinicapi.New(cfg.SupinicAPIKey)
+	go supinic.UpdateAliveStatus()
 
 	err = tcb.TwitchIRC.Connect()
 	if err != nil {

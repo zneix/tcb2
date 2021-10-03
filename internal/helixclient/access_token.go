@@ -4,7 +4,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/nicklaw5/helix"
+	"github.com/nicklaw5/helix/v2"
 )
 
 // initAppAccessToken requests and sets app access token to the provided helix.Client

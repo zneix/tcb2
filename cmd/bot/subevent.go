@@ -8,6 +8,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/zneix/tcb2/internal/bot"
+	"github.com/zneix/tcb2/internal/mongo"
 	"github.com/zneix/tcb2/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -20,11 +21,11 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 		channel = msg.Bot.Self.Channel
 	}
 
-	cur, err := msg.Bot.Mongo.CollectionSubs(msg.ChannelID).Find(context.TODO(), bson.M{
+	curSubs, err := msg.Bot.Mongo.CollectionSubs(msg.ChannelID).Find(context.TODO(), bson.M{
 		"event": msg.Type,
 	})
 	if err != nil {
-		log.Printf("[Mongo] Failed querying events: " + err.Error())
+		log.Printf("[Mongo] Failed querying events: %s\n", err.Error())
 		return
 	}
 
@@ -39,19 +40,21 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 		value = channel.CurrentTitle
 	}
 
+	valueLower := strings.ToLower(value)
+
 	// Fetch all relevant subscriptions
-	for cur.Next(context.TODO()) {
-		// Deserialize sub data
+	for curSubs.Next(context.TODO()) {
+		// Deserialized sub data
 		var sub *bot.SubEventSubscription
-		err := cur.Decode(&sub)
+		err := curSubs.Decode(&sub)
 		if err != nil {
-			log.Println("[Mongo] Malformed subscription document: " + err.Error())
+			log.Printf("[Mongo] Malformed subscription document: %s\n", err.Error())
 			continue
 		}
 
 		// Ignore subscriptions based on the value (if its present)
 		if msg.Type == bot.SubEventTypeGame || msg.Type == bot.SubEventTypeTitle {
-			if sub.Value != "" && !strings.Contains(value, sub.Value) {
+			if sub.Value != "" && !strings.Contains(valueLower, strings.ToLower(sub.Value)) {
 				continue
 			}
 		}
@@ -86,7 +89,7 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 			// We can't append any username to a message that is just our messagePrefix
 			// Loop has to be broken or otherwise it'll run forever
 			if msgsToSend[len(msgsToSend)-1] == messagePrefix {
-				log.Println(fmt.Sprintf("[SubEvent] messagePrefix might be too long (%d) in %s: %# v", utf8.RuneCountInString(messagePrefix), channel, messagePrefix))
+				log.Printf("[SubEvent] messagePrefix might be too long (%d) in %s: %# v\n", utf8.RuneCountInString(messagePrefix), channel, messagePrefix)
 				break
 			}
 			msgsToSend = append(msgsToSend, messagePrefix)
@@ -103,4 +106,37 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 		log.Printf("[SubEvent] Announcing %s in %s; %d/%d(%d/%d chars)\n", msg.Type, channel, i+1, len(msgsToSend), utf8.RuneCountInString(v), channel.MessageLengthMax())
 		channel.Send(v)
 	}
+
+	// Fetch and send channel's MOTD
+	handleMOTD(msg)
+}
+
+// handleMOTD queries MOTD for the channel where event occurred and sends it if exists
+func handleMOTD(msg *bot.SubEventMessage) {
+	// By design, it is only sent on live event
+	if msg.Type != bot.SubEventTypeLive {
+		return
+	}
+
+	res := msg.Bot.Mongo.Collection(mongo.CollectionNameMOTDs).FindOne(context.TODO(), bson.M{
+		"channel_id": msg.ChannelID,
+	})
+	if res.Err() != nil {
+		log.Printf("[Mongo] Failed querying MOTD for %s: %s\n", msg.ChannelID, res.Err())
+		return
+	}
+
+	// Deserialized MOTD data
+	var motd *bot.SubEventMOTD
+	err := res.Decode(&motd)
+	if err != nil {
+		log.Printf("[Mongo] Malformed MOTD document for %s: %s\n", msg.ChannelID, err.Error())
+		return
+	}
+
+	// Send the MOTD to the channel
+	channel := msg.Bot.Channels[msg.ChannelID]
+	log.Printf("[SubEvent] Sending channel MOTD to %s (%d/%d chars)\n", channel, utf8.RuneCountInString(motd.Message), channel.MessageLengthMax())
+	// Channel.Send handles empty messages for us already, in case motd.Message would be empty
+	channel.Send(motd.Message)
 }

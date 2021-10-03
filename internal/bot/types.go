@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gempir/go-twitch-irc/v2"
-	"github.com/nicklaw5/helix"
+	"github.com/nicklaw5/helix/v2"
 	"github.com/zneix/tcb2/internal/eventsub"
 	"github.com/zneix/tcb2/internal/mongo"
 )
@@ -78,6 +78,13 @@ type CommandController struct {
 	Commands map[string]*Command
 	aliases  map[string]string
 	Prefix   string
+}
+
+// SubEventMOTD if present for a channel with the corresponding ChannelID, should be posted right after announcing channel going live
+// It could be useful to remind streamer to tweet or announce going live on Discord
+type SubEventMOTD struct {
+	ChannelID string `bson:"channel_id"`
+	Message   string `bson:"message"`
 }
 
 type SubEventSubscription struct {

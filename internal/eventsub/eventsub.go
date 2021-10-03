@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/nicklaw5/helix"
+	"github.com/nicklaw5/helix/v2"
 	"github.com/zneix/tcb2/internal/api"
 	"github.com/zneix/tcb2/internal/config"
 )

@@ -17,8 +17,8 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 	return &bot.Command{
 		Name:            "notifyme",
 		Aliases:         []string{"tcbnotifyme"},
-		Description:     "Subscribe to an event. Optional value can be only used with title and game events. For list of available events use: {prefix}events",
-		Usage:           "<event> [optional value]",
+		Description:     "Subscribe to an event. Optional value can be only used with title and game events. For list of available events use: \"{prefix}events\". You can use \"{prefix}notifyme all\" to subscribe to all events at once!",
+		Usage:           "<event (or \"all\")> [optional value]",
 		IgnoreSelf:      true,
 		CooldownChannel: 1 * time.Second,
 		CooldownUser:    5 * time.Second,
@@ -34,6 +34,42 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			// No arguments, return an error message
 			if len(args) < 1 {
 				channel.Sendf("@%s, you must specify an event to subscribe to. Available events: %s", msg.User.Name, availableEvents)
+				return
+			}
+
+			// Special case - subscribe to all the events
+			if strings.EqualFold(args[0], "all") {
+				// Unsubscribe the user from any events that they could've been subscribed to before
+				resDel, err := tcb.Mongo.CollectionSubs(msg.RoomID).DeleteMany(context.TODO(), bson.M{
+					"user_id": msg.User.ID,
+				})
+				if err != nil {
+					log.Println("[Mongo] Failed deleting subscriptions: " + err.Error())
+					channel.Sendf("@%s, internal server error occured while trying to delete your old subscriptions monkaS @zneix", msg.User.Name)
+					return
+				}
+				log.Printf("[Mongo] Deleted %d subscription(s) for %# v(%s) in %s", resDel.DeletedCount, msg.User.Name, msg.User.ID, channel)
+
+				// Now add subscriptions to all supported events
+				allEvents := []interface{}{}
+				for subEventIndex := range bot.SubEventDescriptions {
+					allEvents = append(allEvents, bot.SubEventSubscription{
+						UserLogin: msg.User.Name,
+						UserID:    msg.User.ID,
+						Event:     bot.SubEventType(subEventIndex),
+						Value:     "",
+					})
+				}
+				resIns, err := tcb.Mongo.CollectionSubs(msg.RoomID).InsertMany(context.TODO(), allEvents)
+				if err != nil {
+					log.Println("[Mongo] Failed adding new subscriptions for all events: " + err.Error())
+					channel.Sendf("@%s, internal server error occured while trying to add your new subscriptions monkaS @zneix", msg.User.Name)
+					return
+				}
+				log.Printf("[Mongo] Added %d subscriptions for %# v(%s) in %s, ID: %v", len(resIns.InsertedIDs), msg.User.Name, msg.User.ID, channel, resIns.InsertedIDs)
+
+				// Inform the user about actions taken
+				channel.Sendf("@%s, I will now ping you for all events in this channel: %s", msg.User.Name, availableEvents)
 				return
 			}
 
