@@ -30,6 +30,7 @@ func main() {
 	mongoConnection.Connect()
 
 	twitchIRC := twitch.NewClient(cfg.TwitchLogin, "oauth:"+cfg.TwitchOAuth)
+	twitchIRC.SetRateLimiter(twitch.CreateVerifiedRateLimiter())
 
 	helixClient, err := helixclient.New(cfg)
 	if err != nil {

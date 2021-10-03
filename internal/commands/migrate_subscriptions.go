@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gempir/go-twitch-irc/v2"
-	"github.com/nicklaw5/helix"
+	"github.com/nicklaw5/helix/v2"
 	"github.com/zneix/tcb2/internal/bot"
 	"github.com/zneix/tcb2/internal/mongo"
 	"go.mongodb.org/mongo-driver/bson"
