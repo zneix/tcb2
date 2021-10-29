@@ -78,7 +78,7 @@ func (channel *Channel) MessageLengthMax() int {
 }
 
 func (channel *Channel) ChangeMode(mongoConn *mongo.Connection, newMode ChannelMode) (err error) {
-	log.Printf("[Mongo] Changing mode in %s from %v to %v", channel.String(), channel.Mode, newMode)
+	log.Printf("[Mongo] Changing mode in %s from %v to %v", channel, channel.Mode, newMode)
 	channel.Mode = newMode
 
 	// Update mode in the database as well
@@ -91,7 +91,7 @@ func (channel *Channel) ChangeMode(mongoConn *mongo.Connection, newMode ChannelM
 	})
 
 	if err != nil {
-		log.Printf("[Mongo] Error updating ChannelMode for %s: %s\n", channel.String(), err.Error())
+		log.Printf("[Mongo] Error updating ChannelMode for %s: %s\n", channel, err)
 	}
 	return
 }

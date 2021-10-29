@@ -26,7 +26,7 @@ func NewMongoConnection(bgctx context.Context, cfg *config.TCBConfig) *Connectio
 	client, err := mongo.NewClient(clientOptions)
 
 	if err != nil {
-		log.Fatalf("[Mongo] Failed to create a new client: %s\n", err.Error())
+		log.Fatalf("[Mongo] Failed to create a new client: %s\n", err)
 	}
 
 	return &Connection{

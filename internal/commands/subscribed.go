@@ -29,7 +29,7 @@ func Subscribed(tcb *bot.Bot) *bot.Command {
 				"user_id": msg.User.ID,
 			})
 			if err != nil {
-				log.Printf("[Mongo] Failed querying events: " + err.Error())
+				log.Printf("[Mongo] Failed querying events: %s\n", err)
 				return
 			}
 
