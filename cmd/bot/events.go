@@ -162,6 +162,11 @@ func registerEvents(tcb *bot.Bot) {
 		log.Printf("[EventSub:stream.online] %# v\n", event)
 		channel := tcb.Channels[event.BroadcasterUserID]
 
+		if channel.IsLive {
+			log.Printf("[EventSub] Received stream.online, but %s seems to be already live!", channel)
+			return
+		}
+
 		channel.IsLive = true
 		// Announce channel going live
 		go subEventTrigger(&bot.SubEventMessage{
@@ -175,6 +180,11 @@ func registerEvents(tcb *bot.Bot) {
 	tcb.EventSub.OnStreamOfflineEvent(func(event helix.EventSubStreamOfflineEvent) {
 		log.Printf("[EventSub:stream.offline] %# v\n", event)
 		channel := tcb.Channels[event.BroadcasterUserID]
+
+		if !channel.IsLive {
+			log.Printf("[EventSub] Received stream.offline, but %s seems to be already offline!", channel)
+			return
+		}
 
 		channel.IsLive = false
 		// Announce channel going offline
