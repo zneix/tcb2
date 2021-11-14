@@ -29,7 +29,7 @@ func registerEvents(tcb *bot.Bot) {
 
 		// Parse command name and arguments
 		args := strings.Fields(message.Message)
-		commandName := args[0][utf8.RuneCountInString(tcb.Commands.Prefix):]
+		commandName := strings.ToLower(args[0][utf8.RuneCountInString(tcb.Commands.Prefix):])
 		args = args[1:]
 
 		// Try to find the command by its name and/or aliases
