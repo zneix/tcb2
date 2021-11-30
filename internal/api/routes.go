@@ -25,7 +25,8 @@ func (server *Server) routeHealth(w http.ResponseWriter, r *http.Request) {
 		m.Sys/1024/1024,
 		m.NumGC)
 
-	_, _ = w.Write([]byte(fmt.Sprintf("API Uptime: %s\nMemory: %s\n", utils.TimeSince(server.startTime), memory)))
+	// _, _ = w.Write([]byte(fmt.Sprintf("API Uptime: %s\nMemory: %s\n", utils.TimeSince(server.startTime), memory)))
+	fmt.Fprintf(w, "API Uptime: %s\nMemory: %s\n", utils.TimeSince(server.startTime), memory)
 }
 
 func registerMainRoutes(server *Server) {
