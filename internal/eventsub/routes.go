@@ -48,8 +48,9 @@ func (esub *EventSub) routeCallback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	esub.handleIncomingNotification(&notification)
+	// XXX: This order of these two functions seems awfully wrong, but in stream-online-while-already-live cases it /could/ prevent panics(?)
 	w.WriteHeader(http.StatusOK)
+	esub.handleIncomingNotification(&notification)
 }
 
 func (esub *EventSub) registerAPIRoutes(server *api.Server) {
