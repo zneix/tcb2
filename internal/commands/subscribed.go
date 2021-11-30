@@ -71,7 +71,7 @@ func Subscribed(tcb *bot.Bot) *bot.Command {
 					}
 				}
 				if len(values) == 0 {
-					parts = append(parts, fmt.Sprint(k))
+					parts = append(parts, k.String())
 				} else {
 					parts = append(parts, fmt.Sprintf("%s (only for values: %s)", k, strings.Join(values, ", ")))
 				}
