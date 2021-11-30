@@ -67,7 +67,7 @@ func Subscribed(tcb *bot.Bot) *bot.Command {
 				values := []string{}
 				for _, subIndex := range v {
 					if subs[subIndex].Value != "" {
-						values = append(values, fmt.Sprintf("\"%s\"", subs[subIndex].Value))
+						values = append(values, fmt.Sprintf("%q", subs[subIndex].Value))
 					}
 				}
 				if len(values) == 0 {
