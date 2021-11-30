@@ -2,7 +2,7 @@ package eventsub
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 
@@ -18,7 +18,7 @@ func (esub *EventSub) routeIndex(w http.ResponseWriter, r *http.Request) {
 
 // routeCallback handles POST /eventsub/callback
 func (esub *EventSub) routeCallback(w http.ResponseWriter, r *http.Request) {
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		log.Println("[EventSub] Error reading request body in eventSubCallback: " + err.Error())
 		return
