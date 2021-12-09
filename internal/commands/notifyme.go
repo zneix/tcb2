@@ -19,8 +19,8 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 		Aliases:         []string{"tcbnotifyme"},
 		Description:     "Subscribe to an event. Optional value can be only used with title and game events. For list of available events use: \"{prefix}events\". You can use \"{prefix}notifyme all\" to subscribe to all events at once!",
 		Usage:           "<event (or \"all\")> [optional value]",
-		CooldownChannel: 1 * time.Second,
-		CooldownUser:    5 * time.Second,
+		CooldownChannel: 100 * time.Millisecond,
+		CooldownUser:    3 * time.Second,
 		Run: func(msg twitch.PrivateMessage, args []string) {
 			channel := tcb.Channels[msg.RoomID]
 
