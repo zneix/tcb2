@@ -22,6 +22,8 @@ func registerEvents(tcb *bot.Bot) {
 
 	// PRIVMSG
 	tcb.TwitchIRC.OnPrivateMessage(func(message twitch.PrivateMessage) {
+		pajbotAlert(tcb, &message)
+
 		// Ignore non-commands
 		if !strings.HasPrefix(message.Message, tcb.Commands.Prefix) {
 			return
@@ -194,4 +196,16 @@ func registerEvents(tcb *bot.Bot) {
 			Type:      bot.SubEventTypeOffline,
 		})
 	})
+}
+
+// Little fun module responding to pajbot alerts
+func pajbotAlert(tcb *bot.Bot, msg *twitch.PrivateMessage) {
+	if msg.RoomID == "11148817" && (msg.User.ID == "82008718" || msg.User.ID == "99631238") {
+		if msg.Action && strings.HasPrefix(msg.Message, "pajaS 🚨 ALERT") {
+			log.Printf("[pajbotAlert] triggered by %s(%s)", msg.User.Name, msg.User.ID)
+
+			channel := tcb.Channels[msg.RoomID]
+			channel.Send(".me pajaDinkDonk 🚨 PINGS")
+		}
+	}
 }
