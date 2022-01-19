@@ -205,7 +205,7 @@ func pajbotAlert(tcb *bot.Bot, msg *twitch.PrivateMessage) {
 			log.Printf("[pajbotAlert] triggered by %s(%s)", msg.User.Name, msg.User.ID)
 
 			channel := tcb.Channels[msg.RoomID]
-			channel.Send(".me pajaDinkDonk 🚨 PINGS")
+			channel.Send(".me pajaCock 🚨 MODERATORS")
 		}
 	}
 }
