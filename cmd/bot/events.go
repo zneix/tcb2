@@ -137,7 +137,10 @@ func registerEvents(tcb *bot.Bot) {
 	// channel.update
 	tcb.EventSub.OnChannelUpdateEvent(func(event helix.EventSubChannelUpdateEvent) {
 		log.Printf("[EventSub:channel.update] %# v\n", event)
-		channel := tcb.Channels[event.BroadcasterUserID]
+		channel, ok := tcb.Channels[event.BroadcasterUserID]
+		if !ok {
+			return
+		}
 
 		// Announce game change
 		if event.CategoryName != channel.CurrentGame {
@@ -162,7 +165,10 @@ func registerEvents(tcb *bot.Bot) {
 	// stream.online
 	tcb.EventSub.OnStreamOnlineEvent(func(event helix.EventSubStreamOnlineEvent) {
 		log.Printf("[EventSub:stream.online] %# v\n", event)
-		channel := tcb.Channels[event.BroadcasterUserID]
+		channel, ok := tcb.Channels[event.BroadcasterUserID]
+		if !ok {
+			return
+		}
 
 		if channel.IsLive {
 			log.Printf("[EventSub] Received stream.online, but %s seems to be already live!", channel)
@@ -181,7 +187,10 @@ func registerEvents(tcb *bot.Bot) {
 	// stream.offline
 	tcb.EventSub.OnStreamOfflineEvent(func(event helix.EventSubStreamOfflineEvent) {
 		log.Printf("[EventSub:stream.offline] %# v\n", event)
-		channel := tcb.Channels[event.BroadcasterUserID]
+		channel, ok := tcb.Channels[event.BroadcasterUserID]
+		if !ok {
+			return
+		}
 
 		if !channel.IsLive {
 			log.Printf("[EventSub] Received stream.offline, but %s seems to be already offline!", channel)
