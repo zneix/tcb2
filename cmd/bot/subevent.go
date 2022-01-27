@@ -69,9 +69,7 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 		return
 	}
 
-	// Construct ping message's "prefix"
-	// Limit the length of a title / game in case it's too long, Twitch's limit is 140 anyway
-	messagePrefix := ".me " + strings.ReplaceAll(channel.Events[msg.Type], "{value}", utils.LimitString(value, 100))
+	messagePrefix := createMessagePrefix(channel.Events[msg.Type], value, channel.Login)
 
 	// Prepare ping messages
 	msgsToSend := []string{messagePrefix}
@@ -105,6 +103,16 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 
 	// Fetch and send channel's MOTD
 	handleMOTD(msg)
+}
+
+// createMessagePrefix constructs ping message's "prefix", which will be the beginning of every ping message
+func createMessagePrefix(format, value, login string) string {
+	// Limit the length of a title / game in case it's too long, Twitch's limit is 140 anyway
+	prefixReplacer := strings.NewReplacer(
+		"{value}", utils.LimitString(value, 100),
+		"{login}", login,
+	)
+	return ".me " + prefixReplacer.Replace(format)
 }
 
 // handleMOTD queries MOTD for the channel where event occurred and sends it if exists
