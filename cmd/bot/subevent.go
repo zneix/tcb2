@@ -106,7 +106,7 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 }
 
 // createMessagePrefix constructs ping message's "prefix", which will be the beginning of every ping message
-func createMessagePrefix(format string, value string, login string) string {
+func createMessagePrefix(format, value, login string) string {
 	// Limit the length of a title / game in case it's too long, Twitch's limit is 140 anyway
 	prefixReplacer := strings.NewReplacer(
 		"{value}", utils.LimitString(value, 100),
