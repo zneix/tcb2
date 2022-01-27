@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -11,6 +12,7 @@ import (
 	"github.com/zneix/tcb2/internal/mongo"
 	"github.com/zneix/tcb2/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodb "go.mongodb.org/mongo-driver/mongo"
 )
 
 // subEventTrigger will fetch relevant subscriptions and prepare ping messages, then attempt sending them in the channel where the event has occured
@@ -77,8 +79,8 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 		sub := subs[i]
 		newMsg := fmt.Sprintf("%s %s", msgsToSend[len(msgsToSend)-1], sub.UserLogin)
 
-		// Adding user to the message would exceed limit in the taget channel
-		// We also want to re-run this event by decreasing i
+		// Adding user to the message would exceed limit in the target channel
+		// We also want to re-run this iteration by decreasing i
 		if utf8.RuneCountInString(newMsg) > channel.MessageLengthMax() {
 			// We can't append any username to a message that is just our messagePrefix
 			// Loop has to be broken or otherwise it'll run forever
@@ -115,7 +117,11 @@ func handleMOTD(msg *bot.SubEventMessage) {
 	res := msg.Bot.Mongo.Collection(mongo.CollectionNameMOTDs).FindOne(context.TODO(), bson.M{
 		"channel_id": msg.ChannelID,
 	})
-	if res.Err() != nil {
+	if err := res.Err(); err != nil {
+		// Ignoring ErrNoDocuments, since it's not really an error (plus it is returned quite often)
+		if errors.Is(err, mongodb.ErrNoDocuments) {
+			return
+		}
 		log.Printf("[Mongo] Failed querying MOTD for %s: %s\n", msg.ChannelID, res.Err())
 		return
 	}
