@@ -14,7 +14,7 @@ func (server *Server) routeIndex(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write([]byte("This is the public titlechange_bot's API, most of the endpoints however are (and will be) undocumented ThreeLetterAPI TeaTime\nMore information on the GitHub repo: https://github.com/zneix/tcb2\n"))
 }
 
-// routeHealth handles GET /routeHealth
+// routeHealth handles GET /health
 func (server *Server) routeHealth(w http.ResponseWriter, r *http.Request) {
 	var m runtime.MemStats
 	runtime.ReadMemStats(&m)
