@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gempir/go-twitch-irc/v2"
+	"github.com/gempir/go-twitch-irc/v3"
 	"github.com/zneix/tcb2/internal/bot"
 )
 

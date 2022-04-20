@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/gempir/go-twitch-irc/v2"
+	"github.com/gempir/go-twitch-irc/v3"
 	"github.com/zneix/tcb2/internal/api"
 	"github.com/zneix/tcb2/internal/bot"
 	"github.com/zneix/tcb2/internal/common"
@@ -30,7 +30,7 @@ func main() {
 	mongoConnection.Connect()
 
 	twitchIRC := twitch.NewClient(cfg.TwitchLogin, "oauth:"+cfg.TwitchOAuth)
-	twitchIRC.SetRateLimiter(twitch.CreateVerifiedRateLimiter())
+	twitchIRC.SetJoinRateLimiter(twitch.CreateVerifiedRateLimiter())
 
 	helixClient, err := helixclient.New(cfg)
 	if err != nil {

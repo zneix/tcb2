@@ -1,9 +1,9 @@
 module github.com/zneix/tcb2
 
-go 1.17
+go 1.18
 
 require (
-	github.com/gempir/go-twitch-irc/v2 v2.8.1
+	github.com/gempir/go-twitch-irc/v3 v3.0.0
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/nicklaw5/helix/v2 v2.4.0
 	github.com/spf13/pflag v1.0.5

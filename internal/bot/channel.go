@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/gempir/go-twitch-irc/v2"
+	"github.com/gempir/go-twitch-irc/v3"
 	"github.com/zneix/tcb2/internal/mongo"
 	"github.com/zneix/tcb2/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"

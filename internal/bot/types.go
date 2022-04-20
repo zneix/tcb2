@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gempir/go-twitch-irc/v2"
+	"github.com/gempir/go-twitch-irc/v3"
 	"github.com/nicklaw5/helix/v2"
 	"github.com/zneix/tcb2/internal/eventsub"
 	"github.com/zneix/tcb2/internal/mongo"
