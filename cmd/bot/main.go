@@ -27,7 +27,7 @@ func main() {
 	ctx := context.Background()
 
 	mongoConnection := mongo.NewMongoConnection(ctx, cfg)
-	mongoConnection.Connect()
+	mongoConnection.Connect(ctx)
 
 	twitchIRC := twitch.NewClient(cfg.TwitchLogin, "oauth:"+cfg.TwitchOAuth)
 	twitchIRC.SetJoinRateLimiter(twitch.CreateVerifiedRateLimiter())

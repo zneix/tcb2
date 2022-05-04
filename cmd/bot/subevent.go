@@ -18,13 +18,14 @@ import (
 // subEventTrigger will fetch relevant subscriptions and prepare ping messages, then attempt sending them in the channel where the event has occured
 func subEventTrigger(msg *bot.SubEventMessage) {
 	channel := msg.Bot.Channels[msg.ChannelID]
+	ctx := context.TODO()
 
 	if channel.IsLive && channel.EventsOnlyOffline && msg.Type != bot.SubEventTypeLive {
 		log.Printf("[SubEvent] Skipped announcing %s in %s because channel is live\n", msg.Type, channel)
 		return
 	}
 
-	curSubs, err := msg.Bot.Mongo.CollectionSubs(msg.ChannelID).Find(context.TODO(), bson.M{
+	curSubs, err := msg.Bot.Mongo.CollectionSubs(msg.ChannelID).Find(ctx, bson.M{
 		"event": msg.Type,
 	})
 	if err != nil {
@@ -46,7 +47,7 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 	valueLower := strings.ToLower(value)
 
 	// Fetch all relevant subscriptions
-	for curSubs.Next(context.TODO()) {
+	for curSubs.Next(ctx) {
 		// Deserialized sub data
 		var sub *bot.SubEventSubscription
 		err := curSubs.Decode(&sub)

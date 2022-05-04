@@ -39,6 +39,7 @@ func (c *Client) requestAliveStatus() {
 	log.Println("[SupinicAPI] Pinged alive endpoint, status:", res.StatusCode)
 }
 
+// TODO: make use of context.Context here
 // UpdateAliveStatus starts routine updating alive status on Supinic's API right away and every 15 minutes
 func (c *Client) UpdateAliveStatus() {
 	if c.apiKey == "" {

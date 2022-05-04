@@ -23,6 +23,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 		CooldownUser:    3 * time.Second,
 		Run: func(msg twitch.PrivateMessage, args []string) {
 			channel := tcb.Channels[msg.RoomID]
+			ctx := context.TODO()
 
 			eventStrings := []string{}
 			for i, desc := range bot.SubEventDescriptions {
@@ -39,7 +40,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			// Special case - subscribe to all the events
 			if strings.EqualFold(args[0], "all") {
 				// Unsubscribe the user from any events that they could've been subscribed to before
-				resDel, err := tcb.Mongo.CollectionSubs(msg.RoomID).DeleteMany(context.TODO(), bson.M{
+				resDel, err := tcb.Mongo.CollectionSubs(msg.RoomID).DeleteMany(ctx, bson.M{
 					"user_id": msg.User.ID,
 				})
 				if err != nil {
@@ -59,7 +60,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 						Value:     "",
 					})
 				}
-				resIns, err := tcb.Mongo.CollectionSubs(msg.RoomID).InsertMany(context.TODO(), allEvents)
+				resIns, err := tcb.Mongo.CollectionSubs(msg.RoomID).InsertMany(ctx, allEvents)
 				if err != nil {
 					log.Println("[Mongo] Failed adding new subscriptions for all events:", err)
 					channel.Sendf("@%s, internal server error occured while trying to add your new subscriptions monkaS @zneix", msg.User.Name)
@@ -86,7 +87,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			}
 
 			// Find user's subscriptions in this chat for the specified event
-			cur, err := tcb.Mongo.CollectionSubs(msg.RoomID).Find(context.TODO(), bson.M{
+			cur, err := tcb.Mongo.CollectionSubs(msg.RoomID).Find(ctx, bson.M{
 				"user_id": msg.User.ID,
 				"event":   event,
 			})
@@ -101,7 +102,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			var deletedSubCount int
 
 			// Deserialize subscription data
-			for cur.Next(context.TODO()) {
+			for cur.Next(ctx) {
 				var sub *bot.SubEventSubscription
 				err = cur.Decode(&sub)
 				if err != nil {
@@ -144,7 +145,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			// We want to delete all other subscriptions for this event for this user first
 			if hasThisSub && len(value) < 1 {
 				var res *mongo.DeleteResult
-				res, err = tcb.Mongo.CollectionSubs(msg.RoomID).DeleteMany(context.TODO(), bson.M{
+				res, err = tcb.Mongo.CollectionSubs(msg.RoomID).DeleteMany(ctx, bson.M{
 					"user_id": msg.User.ID,
 					"event":   event,
 				})
@@ -158,7 +159,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			}
 
 			// Add requested subscription
-			res, err := tcb.Mongo.CollectionSubs(msg.RoomID).InsertOne(context.TODO(), bot.SubEventSubscription{
+			res, err := tcb.Mongo.CollectionSubs(msg.RoomID).InsertOne(ctx, bot.SubEventSubscription{
 				UserID:    msg.User.ID,
 				UserLogin: msg.User.Name,
 				Event:     event,

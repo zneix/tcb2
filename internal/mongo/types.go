@@ -1,14 +1,9 @@
 package mongo
 
-import (
-	"context"
-
-	"go.mongodb.org/mongo-driver/mongo"
-)
+import "go.mongodb.org/mongo-driver/mongo"
 
 type Connection struct {
 	client       *mongo.Client
-	ctx          context.Context
 	databaseName string
 }
 

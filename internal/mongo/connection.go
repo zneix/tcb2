@@ -31,13 +31,12 @@ func NewMongoConnection(bgctx context.Context, cfg *config.TCBConfig) *Connectio
 
 	return &Connection{
 		client:       client,
-		ctx:          bgctx,
 		databaseName: cfg.MongoDatabaseName,
 	}
 }
 
-func (conn Connection) Connect() {
-	ctx, cancel := context.WithTimeout(conn.ctx, 10*time.Second)
+func (conn Connection) Connect(bgctx context.Context) {
+	ctx, cancel := context.WithTimeout(bgctx, 10*time.Second)
 	defer cancel()
 
 	err := conn.client.Connect(ctx)
@@ -52,8 +51,8 @@ func (conn Connection) Connect() {
 	log.Println("[Mongo] connected")
 }
 
-func (conn Connection) Disconnect() {
-	ctx, cancel := context.WithTimeout(conn.ctx, 10*time.Second)
+func (conn Connection) Disconnect(bgctx context.Context) {
+	ctx, cancel := context.WithTimeout(bgctx, 10*time.Second)
 	defer cancel()
 
 	err := conn.client.Disconnect(ctx)
