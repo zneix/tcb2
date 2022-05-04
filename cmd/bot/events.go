@@ -86,7 +86,7 @@ func registerEvents(tcb *bot.Bot) {
 		userType, ok := message.Tags["user-type"]
 		switch {
 		case !ok:
-			log.Println("[USERSTATE] user-type tag was not found in the IRC message, either no capabilities or Twitch removed this tag xd")
+			log.Println("[TwitchIRC:USERSTATE] user-type tag was not found in the IRC message, either no capabilities or Twitch removed this tag xd")
 
 		case userType == "mod":
 			newMode = bot.ChannelModeModerator

@@ -1,6 +1,6 @@
 package bot
 
-// ParseSubEventType tries to convert value to a ChannelEvent event
+// ParseSubEventType attempts to convert value to a ChannelEvent event
 func ParseSubEventType(value string) (valid bool, event SubEventType) {
 	switch value {
 	case "game":

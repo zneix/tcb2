@@ -34,7 +34,7 @@ func main() {
 
 	helixClient, err := helixclient.New(cfg)
 	if err != nil {
-		log.Fatalf("[Helix] Error while initializing client: %s\n", err)
+		log.Fatalln("[Helix] Error while initializing client:", err)
 	}
 
 	apiServer := api.New(cfg)

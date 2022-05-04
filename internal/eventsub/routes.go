@@ -20,7 +20,8 @@ func (esub *EventSub) routeIndex(w http.ResponseWriter, r *http.Request) {
 func (esub *EventSub) routeCallback(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		log.Println("[EventSub] Error reading request body in eventSubCallback: " + err.Error())
+		log.Println("[EventSub] Error reading request body in eventSubCallback:", err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	defer r.Body.Close()

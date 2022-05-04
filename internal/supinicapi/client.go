@@ -1,7 +1,6 @@
 package supinicapi
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -25,19 +24,19 @@ func New(supinicAPIKey string) *Client {
 func (c *Client) requestAliveStatus() {
 	req, err := http.NewRequest("PUT", "https://supinic.com/api/bot-program/bot/active", http.NoBody)
 	if err != nil {
-		log.Printf("[SupinicAPI] Error creating API request: %s\n", err)
+		log.Println("[SupinicAPI] Error creating API request:", err)
 		return
 	}
-	req.Header.Set("Authorization", fmt.Sprintf("Basic %s", c.apiKey))
+	req.Header.Set("Authorization", "Basic "+c.apiKey)
 
 	res, err := c.httpClient.Do(req)
 	if err != nil {
-		log.Printf("[SupinicAPI] Failed to update alive status: %s\n", err)
+		log.Println("[SupinicAPI] Failed to update alive status:", err)
 		return
 	}
 	defer res.Body.Close()
 
-	log.Printf("[SupinicAPI] Pinged alive endpoint, status: %d\n", res.StatusCode)
+	log.Println("[SupinicAPI] Pinged alive endpoint, status:", res.StatusCode)
 }
 
 // UpdateAliveStatus starts routine updating alive status on Supinic's API right away and every 15 minutes

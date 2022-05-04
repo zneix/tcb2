@@ -35,7 +35,7 @@ func mountRouter(server *Server) *chi.Mux {
 
 	u, err := url.Parse(server.BaseURL)
 	if err != nil {
-		log.Fatalln("[API] Error mounting router: " + err.Error())
+		log.Fatalln("[API] Error mounting router: ", err)
 	}
 	if u.Scheme != "http" && u.Scheme != "https" {
 		log.Fatalln("[API] Scheme must be included in Base URL")

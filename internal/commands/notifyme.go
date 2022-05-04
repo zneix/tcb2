@@ -43,7 +43,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 					"user_id": msg.User.ID,
 				})
 				if err != nil {
-					log.Println("[Mongo] Failed deleting subscriptions: " + err.Error())
+					log.Println("[Mongo] Failed deleting subscriptions:", err)
 					channel.Sendf("@%s, internal server error occured while trying to delete your old subscriptions monkaS @zneix", msg.User.Name)
 					return
 				}
@@ -61,7 +61,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 				}
 				resIns, err := tcb.Mongo.CollectionSubs(msg.RoomID).InsertMany(context.TODO(), allEvents)
 				if err != nil {
-					log.Println("[Mongo] Failed adding new subscriptions for all events: " + err.Error())
+					log.Println("[Mongo] Failed adding new subscriptions for all events:", err)
 					channel.Sendf("@%s, internal server error occured while trying to add your new subscriptions monkaS @zneix", msg.User.Name)
 					return
 				}
@@ -91,7 +91,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 				"event":   event,
 			})
 			if err != nil {
-				log.Println("[Mongo] Failed querying subscription: " + err.Error())
+				log.Println("[Mongo] Failed querying subscription:", err)
 				return
 			}
 
@@ -105,7 +105,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 				var sub *bot.SubEventSubscription
 				err = cur.Decode(&sub)
 				if err != nil {
-					log.Println("[Mongo] Malformed subscription document: " + err.Error())
+					log.Println("[Mongo] Malformed subscription document:", err)
 					continue
 				}
 
@@ -149,7 +149,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 					"event":   event,
 				})
 				if err != nil {
-					log.Println("[Mongo] Failed deleting subscriptions: " + err.Error())
+					log.Println("[Mongo] Failed deleting subscriptions:", err)
 					channel.Sendf("@%s, internal server error occured while trying to delete your old subscriptions monkaS @zneix", msg.User.Name)
 					return
 				}
@@ -165,11 +165,11 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 				Value:     value,
 			})
 			if err != nil {
-				log.Println("[Mongo] Failed adding new subscription: " + err.Error())
+				log.Println("[Mongo] Failed adding new subscription:", err)
 				channel.Sendf("@%s, internal server error occured while trying to add your new subscription monkaS @zneix", msg.User.Name)
 				return
 			}
-			log.Printf("[Mongo] Added 1 subscription for %# v(%s) in %s, ID: %v", msg.User.Name, msg.User.ID, channel, res.InsertedID)
+			log.Printf("[Mongo] Added 1 subscription for %s(%s) in %s, ID: %v", msg.User.Name, msg.User.ID, channel, res.InsertedID)
 
 			var givenValue string
 			if len(value) > 0 {

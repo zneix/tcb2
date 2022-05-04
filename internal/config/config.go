@@ -64,17 +64,17 @@ func init() {
 	pflag.String("command-prefix", "!", "Command prefix to which bot will respond to")
 
 	// Misc
-	pflag.String("supinic-api-key", "", "titlechange_bot's key to the Supinic's API, in the format: \"SupibotID:APIKey\" without quotation marks")
+	pflag.String("supinic-api-key", "", `titlechange_bot's key to the Supinic's API, in the format: "SupibotID:APIKey" without quotation marks`)
 
 	// API
 	pflag.StringP("base-url", "b", "", "Base URL of the API to which clients will make their requests. Useful if the API is proxied through reverse proxy like nginx. Value needs to contain full URL with protocol scheme, e.g. https://braize.pajlada.com/chatterino")
 	pflag.StringP("bind-address", "l", ":2558", "Address to which API will bind and start listening on")
 
 	// Twitch
-	pflag.String("twitch-login", "titlechange_bot", "Twitch login of the account on which bot will Log in to IRC")
-	pflag.String("twitch-oauth", "", "OAuth token of the account on which bot will Log in to IRC. Should not have the \"oauth:\" part in the beginning.")
-	pflag.String("twitch-client-id", "", "Twitch client ID")
-	pflag.String("twitch-client-secret", "", "Twitch client secret")
+	pflag.String("twitch-login", "titlechange_bot", "Twitch login of the account on which bot will Log in to Twitch IRC")
+	pflag.String("twitch-oauth", "", `OAuth token of the account on which bot will Log in to IRC. Should not have the "oauth:" part in the beginning.`)
+	pflag.String("twitch-client-id", "", "Twitch Client ID")
+	pflag.String("twitch-client-secret", "", "Twitch Client secret")
 	pflag.String("twitch-eventsub-secret", "", "Twitch EventSub secret used to create subscriptions and verify incoming notifications. Must be between 10 and 100 characters long")
 
 	// Mongo 🥭

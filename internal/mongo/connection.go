@@ -42,12 +42,12 @@ func (conn Connection) Connect() {
 
 	err := conn.client.Connect(ctx)
 	if err != nil {
-		log.Fatalln("[Mongo] Error connecting: " + err.Error())
+		log.Fatalln("[Mongo] Error connecting:", err)
 	}
 
 	err = conn.client.Ping(ctx, nil)
 	if err != nil {
-		log.Fatalln("[Mongo] Error while executing the ping " + err.Error())
+		log.Fatalln("[Mongo] Error while executing the ping:", err)
 	}
 	log.Println("[Mongo] connected")
 }
@@ -58,7 +58,7 @@ func (conn Connection) Disconnect() {
 
 	err := conn.client.Disconnect(ctx)
 	if err != nil {
-		log.Println("[Mongo] Error disconnecting: " + err.Error())
+		log.Println("[Mongo] Error while disconnecting:", err)
 	}
 	log.Println("[Mongo] disconnected")
 }

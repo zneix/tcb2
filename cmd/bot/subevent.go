@@ -28,7 +28,7 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 		"event": msg.Type,
 	})
 	if err != nil {
-		log.Printf("[Mongo] Failed querying events: %s\n", err)
+		log.Println("[Mongo] Failed querying events:", err)
 		return
 	}
 
@@ -51,7 +51,7 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 		var sub *bot.SubEventSubscription
 		err := curSubs.Decode(&sub)
 		if err != nil {
-			log.Printf("[Mongo] Malformed subscription document: %s\n", err)
+			log.Println("[Mongo] Malformed subscription document:", err)
 			continue
 		}
 
@@ -127,10 +127,9 @@ func handleMOTD(msg *bot.SubEventMessage) {
 	})
 	if err := res.Err(); err != nil {
 		// Ignoring ErrNoDocuments, since it's not really an error (plus it is returned quite often)
-		if errors.Is(err, mongodb.ErrNoDocuments) {
-			return
+		if !errors.Is(err, mongodb.ErrNoDocuments) {
+			log.Printf("[Mongo] Failed querying MOTD for %s: %s\n", msg.ChannelID, err)
 		}
-		log.Printf("[Mongo] Failed querying MOTD for %s: %s\n", msg.ChannelID, res.Err())
 		return
 	}
 

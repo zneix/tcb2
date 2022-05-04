@@ -28,7 +28,8 @@ func loadChannels(bgctx context.Context, mongoConn *mongo.Connection, twitchIRC 
 		},
 	})
 	if err != nil {
-		log.Fatalln("[Mongo] Error querying channels: " + err.Error())
+		log.Fatalln("[Mongo] Error querying channels:", err)
+		return channels
 	}
 
 	for cur.Next(ctx) {
@@ -36,7 +37,7 @@ func loadChannels(bgctx context.Context, mongoConn *mongo.Connection, twitchIRC 
 		var channel bot.Channel
 		err := cur.Decode(&channel)
 		if err != nil {
-			log.Println("[Mongo] Malformed channel document: " + err.Error())
+			log.Println("[Mongo] Malformed channel document:", err)
 			continue
 		}
 
@@ -48,7 +49,7 @@ func loadChannels(bgctx context.Context, mongoConn *mongo.Connection, twitchIRC 
 	}
 
 	if err := cur.Err(); err != nil {
-		log.Println("[Mongo] Last cursor error while loading channels wasn't nil: " + err.Error())
+		log.Println("[Mongo] Last cursor error while loading channels wasn't nil:", err)
 	}
 
 	return channels
