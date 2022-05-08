@@ -3,14 +3,37 @@ package bot
 import (
 	"strings"
 	"time"
+
+	"github.com/gempir/go-twitch-irc/v3"
 )
 
-func (c *CommandController) CommandString(cmd *Command) string {
-	str := c.Prefix + cmd.Name
-	if cmd.Usage != "" {
-		str += " " + cmd.Usage
+type Command struct {
+	Name        string
+	Aliases     []string
+	Description string
+	Usage       string
+	Run         func(msg twitch.PrivateMessage, args []string)
+
+	CooldownChannel time.Duration
+	CooldownUser    time.Duration
+
+	// TODO: Perhaps cooldown logic should be stored in Bot / redis (?)
+	LastExecutionChannel map[string]time.Time
+	LastExecutionUser    map[string]time.Time
+}
+
+func (c *Command) String() string {
+	str := c.Name
+	if c.Usage != "" {
+		str += " " + c.Usage
 	}
 	return str
+}
+
+type CommandController struct {
+	Commands map[string]*Command
+	aliases  map[string]string
+	Prefix   string
 }
 
 func (c *CommandController) GetCommand(alias string) (*Command, bool) {

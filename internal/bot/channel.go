@@ -12,6 +12,29 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+type Channel struct {
+	ID    string `bson:"id"`
+	Login string `bson:"login"`
+
+	DisabledCommands   []string                `bson:"disabled_commands"`
+	Events             map[SubEventType]string `bson:"events"`
+	PajbotAPI          *PajbotAPI              `bson:"pajbot_api"`
+	MessageLengthLimit int                     `bson:"message_length_limit"`
+	WhisperCommands    bool                    `bson:"whisper_commands"`
+	EventsOnlyOffline  bool                    `bson:"events_only_offline"`
+	Mode               ChannelMode             `bson:"mode"`
+
+	CurrentTitle string             `bson:"-"`
+	CurrentGame  string             `bson:"-"`
+	IsLive       bool               `bson:"-"`
+	LastMsg      string             `bson:"-"`
+	QueueChannel chan *QueueMessage `bson:"-"`
+}
+
+func (channel *Channel) String() string {
+	return fmt.Sprintf("#%s(%s)", channel.Login, channel.ID)
+}
+
 func (channel *Channel) StartMessageQueue(twitchIRC *twitch.Client) {
 	// log.Println("Starting message queue for", channel)
 	defer log.Println("[Channel] Message queue suddenly quit(?) for", channel)
@@ -54,10 +77,6 @@ func (channel *Channel) Send(message string) {
 // Sendf formats according to a format specifier and runs channel.Send with the resulting string
 func (channel *Channel) Sendf(format string, a ...interface{}) {
 	channel.Send(fmt.Sprintf(format, a...))
-}
-
-func (channel *Channel) String() string {
-	return fmt.Sprintf("#%s(%s)", channel.Login, channel.ID)
 }
 
 func (channel *Channel) MessageLengthMax() int {

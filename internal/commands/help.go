@@ -30,7 +30,7 @@ func Help(tcb *bot.Bot) *bot.Command {
 				cmdStrings := make([]string, 0, len(tcb.Commands.Commands))
 
 				for _, cmd := range tcb.Commands.Commands {
-					cmdStrings = append(cmdStrings, tcb.Commands.CommandString(cmd))
+					cmdStrings = append(cmdStrings, tcb.Commands.Prefix+cmd.String())
 				}
 
 				channel.Sendf("@%s, available commands: %s", msg.User.Name, strings.Join(cmdStrings, ", "))
@@ -44,7 +44,7 @@ func Help(tcb *bot.Bot) *bot.Command {
 				return
 			}
 			description := strings.ReplaceAll(cmd.Description, "{prefix}", tcb.Commands.Prefix)
-			channel.Sendf("@%s, %s (%s cooldown): %s", msg.User.Name, tcb.Commands.CommandString(cmd), cmd.CooldownUser, description)
+			channel.Sendf("@%s, %s%s (%s cooldown): %s", msg.User.Name, tcb.Commands.Prefix, cmd, cmd.CooldownUser, description)
 		},
 	}
 }

@@ -11,6 +11,7 @@ import (
 )
 
 // types
+// TODO: Restructure this and split types to their separate types
 
 // Self contains properties related to bot's user account
 type Self struct {
@@ -32,49 +33,9 @@ type Bot struct {
 	StartTime time.Time
 }
 
-type Channel struct {
-	ID    string `bson:"id"`
-	Login string `bson:"login"`
-
-	DisabledCommands   []string                `bson:"disabled_commands"`
-	Events             map[SubEventType]string `bson:"events"`
-	PajbotAPI          *PajbotAPI              `bson:"pajbot_api"`
-	MessageLengthLimit int                     `bson:"message_length_limit"`
-	WhisperCommands    bool                    `bson:"whisper_commands"`
-	EventsOnlyOffline  bool                    `bson:"events_only_offline"`
-	Mode               ChannelMode             `bson:"mode"`
-
-	CurrentTitle string             `bson:"-"`
-	CurrentGame  string             `bson:"-"`
-	IsLive       bool               `bson:"-"`
-	LastMsg      string             `bson:"-"`
-	QueueChannel chan *QueueMessage `bson:"-"`
-}
-
 type PajbotAPI struct {
 	Mode   PajbotAPIMode `bson:"mode"`
 	Domain string        `bson:"domain"`
-}
-
-type Command struct {
-	Name        string
-	Aliases     []string
-	Description string
-	Usage       string
-	Run         func(msg twitch.PrivateMessage, args []string)
-
-	CooldownChannel time.Duration
-	CooldownUser    time.Duration
-
-	// TODO: Perhaps cooldown logic should be stored in Bot / redis (?)
-	LastExecutionChannel map[string]time.Time
-	LastExecutionUser    map[string]time.Time
-}
-
-type CommandController struct {
-	Commands map[string]*Command
-	aliases  map[string]string
-	Prefix   string
 }
 
 // SubEventMOTD if present for a channel with the corresponding ChannelID, should be posted right after announcing channel going live
