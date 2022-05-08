@@ -33,7 +33,7 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 		return
 	}
 
-	subs := []*bot.SubEventSubscription{}
+	subs := make([]*bot.SubEventSubscription, 0) // XXX: Test if this won't panic
 
 	// value is either new title or new game depending of the event
 	var value string
@@ -49,7 +49,7 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 	// Fetch all relevant subscriptions
 	for curSubs.Next(ctx) {
 		// Deserialized sub data
-		var sub *bot.SubEventSubscription
+		sub := new(bot.SubEventSubscription)
 		err := curSubs.Decode(&sub)
 		if err != nil {
 			log.Println("[Mongo] Malformed subscription document:", err)
@@ -135,7 +135,7 @@ func handleMOTD(msg *bot.SubEventMessage) {
 	}
 
 	// Deserialized MOTD data
-	var motd *bot.SubEventMOTD
+	motd := new(bot.SubEventMOTD)
 	err := res.Decode(&motd)
 	if err != nil {
 		log.Printf("[Mongo] Malformed MOTD document for %s: %s\n", msg.ChannelID, err)

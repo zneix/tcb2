@@ -27,7 +27,7 @@ func Help(tcb *bot.Bot) *bot.Command {
 			channel := tcb.Channels[msg.RoomID]
 			// Generic help
 			if len(args) < 1 {
-				cmdStrings := []string{}
+				cmdStrings := make([]string, 0, len(tcb.Commands.Commands))
 
 				for _, cmd := range tcb.Commands.Commands {
 					cmdStrings = append(cmdStrings, tcb.Commands.CommandString(cmd))

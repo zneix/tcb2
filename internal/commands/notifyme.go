@@ -25,7 +25,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			channel := tcb.Channels[msg.RoomID]
 			ctx := context.TODO()
 
-			eventStrings := []string{}
+			eventStrings := make([]string, 0, len(bot.SubEventDescriptions))
 			for i, desc := range bot.SubEventDescriptions {
 				eventStrings = append(eventStrings, fmt.Sprintf("%s (%s)", bot.SubEventType(i), desc))
 			}
@@ -51,9 +51,9 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 				log.Printf("[Mongo] Deleted %d subscription(s) for %# v(%s) in %s", resDel.DeletedCount, msg.User.Name, msg.User.ID, channel)
 
 				// Now add subscriptions to all supported events
-				allEvents := []interface{}{}
+				allEvents := make([]interface{}, 0, len(bot.SubEventDescriptions))
 				for subEventIndex := range bot.SubEventDescriptions {
-					allEvents = append(allEvents, bot.SubEventSubscription{
+					allEvents = append(allEvents, &bot.SubEventSubscription{
 						UserLogin: msg.User.Name,
 						UserID:    msg.User.ID,
 						Event:     bot.SubEventType(subEventIndex),
