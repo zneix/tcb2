@@ -74,7 +74,7 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 
 	// Prepare ping messages
 	msgsToSend := []string{messagePrefix}
-	for i := 0; i < len(subs); i++ {
+	for i := 0; i < len(subs); {
 		sub := subs[i]
 		newMsg := fmt.Sprintf("%s %s", msgsToSend[len(msgsToSend)-1], sub.UserLogin)
 
@@ -88,11 +88,11 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 				break
 			}
 			msgsToSend = append(msgsToSend, messagePrefix)
-			i--
 			continue
 		}
 		// Otherwise it's good to append the username to message with pings
 		msgsToSend[len(msgsToSend)-1] = newMsg
+		i++
 	}
 
 	// Send messages to the target channel

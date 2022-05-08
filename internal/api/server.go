@@ -60,7 +60,7 @@ func (server *Server) Listen() {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	log.Printf("[API] Listening on %s (Prefix=%s, BaseURL=%s)\n", server.bindAddress, server.listenPrefix, server.BaseURL)
+	log.Printf("[API] Listening on %q (Prefix=%s, BaseURL=%s)\n", server.bindAddress, server.listenPrefix, server.BaseURL)
 	log.Fatal(srv.ListenAndServe())
 }
 
