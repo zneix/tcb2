@@ -216,7 +216,7 @@ const (
 
 // Little fun module responding to pajbot alerts
 func pajbotAlert(tcb *bot.Bot, msg *twitch.PrivateMessage) {
-	if (msg.User.ID != pajbotUserID && msg.User.ID != zneixUserID) || msg.RoomID != pajladaUserID {
+	if msg.RoomID != pajladaUserID || msg.User.ID != pajbotUserID {
 		return
 	}
 
@@ -233,7 +233,7 @@ func pajbotAlert(tcb *bot.Bot, msg *twitch.PrivateMessage) {
 
 // Participating in pajbot /announce chain
 func pajbotAnnounceChain(tcb *bot.Bot, msg *twitch.PrivateMessage) {
-	if (msg.User.ID != pajbotAnnounceChainUserID && msg.User.ID != zneixUserID) || msg.RoomID != pajladaUserID {
+	if msg.RoomID != pajladaUserID || msg.User.ID != pajbotAnnounceChainUserID {
 		return
 	}
 
