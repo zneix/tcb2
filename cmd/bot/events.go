@@ -22,10 +22,10 @@ func registerEvents(tcb *bot.Bot) {
 
 	// PRIVMSG
 	tcb.TwitchIRC.OnPrivateMessage(func(message twitch.PrivateMessage) {
-		pajbotAlert(tcb, &message)
-
-		// Ignore non-commands
+		// Handle non-commands
 		if !strings.HasPrefix(message.Message, tcb.Commands.Prefix) {
+			pajbotAlert(tcb, &message)
+			pajbotAnnounceChain(tcb, &message)
 			return
 		}
 
@@ -207,14 +207,42 @@ func registerEvents(tcb *bot.Bot) {
 	})
 }
 
+const (
+	pajladaUserID             = "11148817" // channel where custom events are taking place
+	pajbotUserID              = "82008718"
+	pajbotAnnounceChainUserID = "463521670" // zneixbot replies with letter "r"
+	zneixUserID               = "99631238"  // bot creator's ID for testing purposes
+)
+
 // Little fun module responding to pajbot alerts
 func pajbotAlert(tcb *bot.Bot, msg *twitch.PrivateMessage) {
-	if msg.RoomID == "11148817" && (msg.User.ID == "82008718" || msg.User.ID == "99631238") {
-		if msg.Action && strings.HasPrefix(msg.Message, "pajaS 🚨 ALERT") {
-			log.Printf("[pajbotAlert] triggered by %s(%s)", msg.User.Name, msg.User.ID)
-
-			channel := tcb.Channels[msg.RoomID]
-			channel.Send(".me pajaCock 🚨 MODERATORS")
-		}
+	if (msg.User.ID != pajbotUserID && msg.User.ID != zneixUserID) || msg.RoomID != pajladaUserID {
+		return
 	}
+
+	if !msg.Action || !strings.HasPrefix(msg.Message, "pajaS 🚨 ALERT") {
+		return
+	}
+
+	log.Printf("[pajbotAlert] triggered by %s(%s)", msg.User.Name, msg.User.ID)
+
+	channel := tcb.Channels[msg.RoomID]
+	channel.Send(".me pajaCock 🚨 MODERATORS")
+
+}
+
+// Participating in pajbot /announce chain
+func pajbotAnnounceChain(tcb *bot.Bot, msg *twitch.PrivateMessage) {
+	if (msg.User.ID != pajbotAnnounceChainUserID && msg.User.ID != zneixUserID) || msg.RoomID != pajladaUserID {
+		return
+	}
+
+	if msg.Message != "/announce rrrree pajaR 💢" {
+		return
+	}
+
+	log.Printf("[pajbotAnnounceChain] triggered by %s(%s)", msg.User.Name, msg.User.ID)
+
+	channel := tcb.Channels[msg.RoomID]
+	channel.Send(".me /announce ssssss 🥤🐍")
 }
