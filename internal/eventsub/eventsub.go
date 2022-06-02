@@ -42,7 +42,7 @@ func (esub *EventSub) handleIncomingNotification(notification *eventSubNotificat
 		var event helix.EventSubChannelUpdateEvent
 		err := json.Unmarshal(notification.Event, &event)
 		if err != nil {
-			log.Printf("[EventSub] Failed to unmarshal notification event: %s, data: %s\n", err, string(notification.Event))
+			log.Printf("[EventSub] Failed to unmarshal notification event: %s, data: %s\n", err, notification.Event)
 			return
 		}
 		if esub.onChannelUpdateEvent != nil {
@@ -54,7 +54,7 @@ func (esub *EventSub) handleIncomingNotification(notification *eventSubNotificat
 		var event helix.EventSubStreamOnlineEvent
 		err := json.Unmarshal(notification.Event, &event)
 		if err != nil {
-			log.Printf("[EventSub] Failed to unmarshal notification event: %s, data: %s\n", err, string(notification.Event))
+			log.Printf("[EventSub] Failed to unmarshal notification event: %s, data: %s\n", err, notification.Event)
 			return
 		}
 		if esub.onStreamOnlineEvent != nil {
@@ -66,7 +66,7 @@ func (esub *EventSub) handleIncomingNotification(notification *eventSubNotificat
 		var event helix.EventSubStreamOfflineEvent
 		err := json.Unmarshal(notification.Event, &event)
 		if err != nil {
-			log.Printf("[EventSub] Failed to unmarshal notification event: %s, data: %s\n", err, string(notification.Event))
+			log.Printf("[EventSub] Failed to unmarshal notification event: %s, data: %s\n", err, notification.Event)
 			return
 		}
 		if esub.onStreamOfflineEvent != nil {

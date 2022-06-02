@@ -20,11 +20,6 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 	channel := msg.Bot.Channels[msg.ChannelID]
 	ctx := context.TODO()
 
-	if channel.IsLive && channel.EventsOnlyOffline && msg.Type != bot.SubEventTypeLive {
-		log.Printf("[SubEvent] Skipped announcing %s in %s because channel is live\n", msg.Type, channel)
-		return
-	}
-
 	curSubs, err := msg.Bot.Mongo.CollectionSubs(msg.ChannelID).Find(ctx, bson.M{
 		"event": msg.Type,
 	})
@@ -70,7 +65,16 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 		return
 	}
 
-	messagePrefix := createMessagePrefix(channel.Events[msg.Type], value, channel.Login)
+	// If the message should be redirected from a channel that is currently live
+	// and has EventsOnlyOffline flag set to true,
+	redirect := false
+
+	if channel.IsLive && channel.EventsOnlyOffline && msg.Type != bot.SubEventTypeLive {
+		log.Printf("[SubEvent] Redirecting %s from %s because channel is live\n", msg.Type, channel)
+		redirect = true
+	}
+
+	messagePrefix := createMessagePrefix(channel.Events[msg.Type], value, channel.Login, redirect)
 
 	// Prepare ping messages
 	msgsToSend := []string{messagePrefix}
@@ -95,7 +99,21 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 		i++
 	}
 
-	// Send messages to the target channel
+	// In case of EventsOnlyOffline flag, send messages to bot's own channel
+	if redirect {
+		botID, ok := msg.Bot.Logins[msg.Bot.Self.Login]
+		if !ok {
+			// handle error
+			return
+		}
+
+		channel, ok = msg.Bot.Channels[botID]
+		if !ok {
+			// handle error as well
+			return
+		}
+	}
+
 	// TODO: Pajbot API (?)
 	for i, v := range msgsToSend {
 		log.Printf("[SubEvent] Announcing %s in %s; %d/%d(%d/%d chars)\n", msg.Type, channel, i+1, len(msgsToSend), utf8.RuneCountInString(v), channel.MessageLengthMax())
@@ -107,13 +125,20 @@ func subEventTrigger(msg *bot.SubEventMessage) {
 }
 
 // createMessagePrefix constructs ping message's "prefix", which will be the beginning of every ping message
-func createMessagePrefix(format, value, login string) string {
+func createMessagePrefix(format, value, login string, redirect bool) string {
 	// Limit the length of a title / game in case it's too long, Twitch's limit is 140 anyway
 	prefixReplacer := strings.NewReplacer(
 		"{value}", utils.LimitString(value, 100),
 		"{login}", login,
 	)
-	return ".me " + prefixReplacer.Replace(format)
+
+	prefix := ".me "
+
+	if redirect {
+		prefix += fmt.Sprintf("[#%s] ", login)
+	}
+
+	return prefix + prefixReplacer.Replace(format)
 }
 
 // handleMOTD queries MOTD for the channel where event occurred and sends it if exists
