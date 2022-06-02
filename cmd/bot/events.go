@@ -24,7 +24,6 @@ func registerEvents(tcb *bot.Bot) {
 	tcb.TwitchIRC.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		// Handle non-commands
 		if !strings.HasPrefix(message.Message, tcb.Commands.Prefix) {
-			pajbotAlert(tcb, &message)
 			pajbotAnnounceChain(tcb, &message)
 			return
 		}
@@ -208,28 +207,10 @@ func registerEvents(tcb *bot.Bot) {
 }
 
 const (
-	pajladaUserID             = "11148817" // channel where custom events are taking place
-	pajbotUserID              = "82008718"
+	pajladaUserID             = "11148817"  // channel where custom events are taking place
+	pajbotUserID              = "82008718"  // pajbot's user ID on Twitch
 	pajbotAnnounceChainUserID = "463521670" // zneixbot replies with letter "r"
-	zneixUserID               = "99631238"  // bot creator's ID for testing purposes
 )
-
-// Little fun module responding to pajbot alerts
-func pajbotAlert(tcb *bot.Bot, msg *twitch.PrivateMessage) {
-	if msg.RoomID != pajladaUserID || msg.User.ID != pajbotUserID {
-		return
-	}
-
-	if !msg.Action || !strings.HasPrefix(msg.Message, "pajaS 🚨 ALERT") {
-		return
-	}
-
-	log.Printf("[pajbotAlert] triggered by %s(%s)", msg.User.Name, msg.User.ID)
-
-	channel := tcb.Channels[msg.RoomID]
-	channel.Send(".me pajaCock 🚨 MODERATORS")
-
-}
 
 // Participating in pajbot /announce chain
 func pajbotAnnounceChain(tcb *bot.Bot, msg *twitch.PrivateMessage) {
