@@ -22,11 +22,10 @@ func registerEvents(tcb *bot.Bot) {
 
 	// PRIVMSG
 	tcb.TwitchIRC.OnPrivateMessage(func(message twitch.PrivateMessage) {
-		// Handle non-commands
-		if !strings.HasPrefix(message.Message, tcb.Commands.Prefix) {
-			pajbotAnnounceChain(tcb, &message)
-			return
-		}
+		// Handle non-commands (unused for now)
+		// if !strings.HasPrefix(message.Message, tcb.Commands.Prefix) {
+		// return
+		// }
 
 		// Parse command name and arguments
 		args := strings.Fields(message.Message)
@@ -204,26 +203,4 @@ func registerEvents(tcb *bot.Bot) {
 			Type:      bot.SubEventTypeOffline,
 		})
 	})
-}
-
-const (
-	pajladaUserID             = "11148817"  // channel where custom events are taking place
-	pajbotUserID              = "82008718"  // pajbot's user ID on Twitch
-	pajbotAnnounceChainUserID = "463521670" // zneixbot replies with letter "r"
-)
-
-// Participating in pajbot /announce chain
-func pajbotAnnounceChain(tcb *bot.Bot, msg *twitch.PrivateMessage) {
-	if msg.RoomID != pajladaUserID || msg.User.ID != pajbotAnnounceChainUserID {
-		return
-	}
-
-	if msg.Message != "/announce rrrree pajaR 💢" {
-		return
-	}
-
-	log.Printf("[pajbotAnnounceChain] triggered by %s(%s)", msg.User.Name, msg.User.ID)
-
-	channel := tcb.Channels[msg.RoomID]
-	channel.Send(".me /announce ssssss 🥤🐍")
 }
