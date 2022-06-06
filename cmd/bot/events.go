@@ -22,10 +22,11 @@ func registerEvents(tcb *bot.Bot) {
 
 	// PRIVMSG
 	tcb.TwitchIRC.OnPrivateMessage(func(message twitch.PrivateMessage) {
-		// Handle non-commands (unused for now)
-		// if !strings.HasPrefix(message.Message, tcb.Commands.Prefix) {
-		// return
-		// }
+		// Early out in case message does not start with command prefix - meaning it's not a command
+		if !strings.HasPrefix(message.Message, tcb.Commands.Prefix) {
+			// Handle non-commands
+			return
+		}
 
 		// Parse command name and arguments
 		args := strings.Fields(message.Message)
