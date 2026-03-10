@@ -107,15 +107,10 @@ func registerEvents(tcb *bot.Bot) {
 			return
 		}
 
-		// Check if Channel.Mode changed by comparing bot's state
+		// Check if Channel.Mode changed to see if we now have privileged write limits - by being either a moderator or vip
 		newMode := bot.ChannelModeNormal
 
-		// Check if we have privileged write limits - by being either a moderator or vip
-		// 1. Check for being a moderator - do this via 'mod' message tag which should be present on every twitch PRIVMSG
-		// 2. Check for being a VIP - do this via checking if user has a VIP badge
-		if modTag, ok := message.Tags["mod"]; ok && modTag == "1" {
-			newMode = bot.ChannelModeModerator
-		} else if _, ok := message.User.Badges["vip"]; ok {
+		if message.User.IsMod || message.User.IsVip {
 			newMode = bot.ChannelModeModerator
 		}
 
