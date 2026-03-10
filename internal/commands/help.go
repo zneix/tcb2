@@ -10,9 +10,8 @@ import (
 
 func Help(tcb *bot.Bot) *bot.Command {
 	return &bot.Command{
-		Name: "help",
+		Name: "tcbhelp",
 		Aliases: []string{
-			"tcbhelp",
 			"tcb_help",
 			"titlechangebothelp",
 			"titlechange_bothelp",

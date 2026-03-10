@@ -17,7 +17,7 @@ func Bot(tcb *bot.Bot) *bot.Command {
 		CooldownUser:    5 * time.Second,
 		Run: func(msg twitch.PrivateMessage, args []string) {
 			channel := tcb.Channels[msg.RoomID]
-			channel.Sendf("@%s, I am a bot created by zneix. I can notify you when the channel goes live or the title changes. Try %shelp for a list of commands. pajaDank", msg.User.Name, tcb.Commands.Prefix)
+			channel.Sendf("@%s, I am a bot created by zneix. I can notify you when the channel goes live or the title changes. Try %stcbhelp for a list of commands. pajaDank", msg.User.Name, tcb.Commands.Prefix)
 		},
 	}
 }

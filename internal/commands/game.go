@@ -9,7 +9,7 @@ import (
 
 func Game(tcb *bot.Bot) *bot.Command {
 	return &bot.Command{
-		Name:            "game",
+		Name:            "tcbgame",
 		Aliases:         []string{"currentgame"},
 		Description:     "Returns current game",
 		Usage:           "",

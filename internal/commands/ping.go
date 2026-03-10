@@ -10,8 +10,8 @@ import (
 
 func Ping(tcb *bot.Bot) *bot.Command {
 	return &bot.Command{
-		Name:            "ping",
-		Aliases:         []string{"tcbping"},
+		Name:            "tcbping",
+		Aliases:         []string{"tcb_ping"},
 		Description:     "Pings the bot to see if it's online",
 		Usage:           "",
 		CooldownChannel: 1 * time.Second,

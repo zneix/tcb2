@@ -9,7 +9,7 @@ import (
 
 func Title(tcb *bot.Bot) *bot.Command {
 	return &bot.Command{
-		Name:            "title",
+		Name:            "tcbtitle",
 		Aliases:         []string{"currenttitle"},
 		Description:     "Returns current title",
 		Usage:           "",
