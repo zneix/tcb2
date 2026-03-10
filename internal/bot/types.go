@@ -2,6 +2,7 @@ package bot
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/gempir/go-twitch-irc/v4"
@@ -25,12 +26,19 @@ type Bot struct {
 	Helix     *helix.Client
 	EventSub  *eventsub.EventSub
 
+	loginsMu sync.Mutex
 	Logins   map[string]string
 	Channels map[string]*Channel
 	Commands *CommandController
 
 	Self      *Self
 	StartTime time.Time
+}
+
+func (b *Bot) MapLoginToID(login string, id string) {
+	b.loginsMu.Lock()
+	b.Logins[login] = id
+	b.loginsMu.Unlock()
 }
 
 type PajbotAPI struct {

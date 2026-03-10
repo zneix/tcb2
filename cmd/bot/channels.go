@@ -100,7 +100,7 @@ func handleChannelsChunk(tcb *bot.Bot, chunk []string) {
 		channel := tcb.Channels[respChannel.BroadcasterID]
 
 		// Set the ID in map translating login names back to IDs
-		tcb.Logins[channel.Login] = channel.ID
+		tcb.MapLoginToID(channel.Login, channel.ID)
 
 		// Assign fetched properties to the channels
 		channel.CurrentGame = respChannel.GameName
