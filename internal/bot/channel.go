@@ -65,7 +65,7 @@ func (channel *Channel) Send(message string) {
 
 	// Append magic character at the end of the message if it's a duplicate
 	if channel.LastMsg == message {
-		message += " \U000E0000"
+		message += " \u034f"
 	}
 
 	// Send message object to the message queue sending messages in ratelimit
