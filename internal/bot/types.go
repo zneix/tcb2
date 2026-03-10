@@ -141,6 +141,6 @@ func (e SubEventType) String() string {
 	case SubEventTypePartnered:
 		return "partnered"
 	default:
-		return fmt.Sprintf("invalid(%d)", int(e))
+		return fmt.Sprintf("invalid(%d)", e)
 	}
 }

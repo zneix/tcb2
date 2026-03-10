@@ -21,7 +21,7 @@ func init() {
 }
 
 func main() {
-	log.Printf("Starting titlechange_bot %s", common.Version())
+	log.Println("Starting titlechange_bot", common.Version())
 
 	cfg := config.New()
 	ctx := context.Background()
