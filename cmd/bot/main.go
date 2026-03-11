@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -29,8 +30,11 @@ func main() {
 	mongoConnection := mongo.NewMongoConnection(ctx, cfg)
 	mongoConnection.Connect(ctx)
 
-	twitchIRC := twitch.NewClient(cfg.TwitchLogin, "oauth:"+cfg.TwitchOAuth)
-	twitchIRC.SetJoinRateLimiter(twitch.CreateVerifiedRateLimiter())
+	// twitch read conn
+	twitchRead := twitch.NewAnonymousClient()
+
+	// twitch write conn
+	twitchWrite := twitch.NewClient(cfg.TwitchLogin, "oauth:"+cfg.TwitchOAuth)
 
 	helixClient, err := helixclient.New(cfg)
 	if err != nil {
@@ -41,20 +45,19 @@ func main() {
 
 	esub := eventsub.New(cfg, apiServer)
 
-	self := &bot.Self{
-		Login: cfg.TwitchLogin,
-		OAuth: cfg.TwitchOAuth,
-	}
-
 	tcb := &bot.Bot{
-		TwitchIRC: twitchIRC,
-		Mongo:     mongoConnection,
-		Helix:     helixClient,
-		EventSub:  esub,
-		Logins:    make(map[string]string),
-		Channels:  loadChannels(ctx, mongoConnection, twitchIRC),
-		Commands:  bot.NewCommandController(cfg.CommandPrefix),
-		Self:      self,
+		TwitchRead:  twitchRead,
+		TwitchWrite: twitchWrite,
+		Mongo:       mongoConnection,
+		Helix:       helixClient,
+		EventSub:    esub,
+		Logins:      make(map[string]string),
+		Channels:    loadChannels(ctx, mongoConnection, twitchWrite),
+		Commands:    bot.NewCommandController(cfg.CommandPrefix),
+		Self: &bot.Self{
+			Login: cfg.TwitchLogin,
+			OAuth: cfg.TwitchOAuth,
+		},
 		StartTime: time.Now(),
 	}
 
@@ -70,8 +73,19 @@ func main() {
 	supinic := supinicapi.New(cfg.SupinicAPIKey)
 	go supinic.UpdateAliveStatus()
 
-	err = tcb.TwitchIRC.Connect()
+	// Connect twitch connections
+	// TODO: Use proper waiting for both connections - maybe use channels waiting for closure
+	// Check twitch connection's .Connect for a good example
+	// For now as a scuffed fix read connection will be blocking
+	go func() {
+		err := tcb.TwitchWrite.Connect()
+		if err != nil {
+			log.Fatalln(fmt.Errorf("Twitch write connection errored: %w", err))
+		}
+	}()
+
+	err = tcb.TwitchRead.Connect()
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln(fmt.Errorf("Twitch read connection errored: %w", err))
 	}
 }

@@ -11,17 +11,43 @@ import (
 	"github.com/zneix/tcb2/internal/bot"
 )
 
+// handlerOnNoticeMessage logic for NOTICE twitch IRC messages
+// It's taken out of registerEvents since it's used for both read and write conns
+func handlerOnNoticeMessage(tcb *bot.Bot, message *twitch.NoticeMessage, connType string) {
+	channelID, ok := tcb.Logins[message.Channel]
+	if !ok {
+		// tcb.Logins map didn't have current channel's ID
+		// Note: this should realistically never occur though, but early exit to prevent panic
+		return
+	}
+	channel := tcb.Channels[channelID]
+
+	log.Printf("[TwitchIRC:%s] NOTICE %s in %s: %s\n", connType, message.MsgID, channel, message.Message)
+
+	switch message.MsgID {
+	case "msg_banned", "msg_channel_suspended":
+		err := channel.ChangeMode(tcb.Mongo, bot.ChannelModeInactive)
+		if err != nil {
+			log.Printf("Failed to change mode in %s: %s\n", channel, err)
+		}
+	default:
+	}
+}
+
 func registerEvents(tcb *bot.Bot) {
 	// Twitch IRC events
 
 	// Authenticated with IRC
-	tcb.TwitchIRC.OnConnect(func() {
-		log.Println("[TwitchIRC] connected")
+	tcb.TwitchRead.OnConnect(func() {
+		log.Println("[TwitchIRC:read] connected, joining channels")
 		joinChannels(tcb)
+	})
+	tcb.TwitchWrite.OnConnect(func() {
+		log.Println("[TwitchIRC:write] connected")
 	})
 
 	// PRIVMSG
-	tcb.TwitchIRC.OnPrivateMessage(func(message twitch.PrivateMessage) {
+	tcb.TwitchRead.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		// Early out in case message does not start with command prefix - meaning it's not a command
 		if !strings.HasPrefix(message.Message, tcb.Commands.Prefix) {
 			// Handle non-commands
@@ -64,7 +90,9 @@ func registerEvents(tcb *bot.Bot) {
 	})
 
 	// USERSTATE
-	tcb.TwitchIRC.OnUserStateMessage(func(message twitch.UserStateMessage) {
+	// These will be triggered whenever a message is written to a channel - so react to those on write connection
+	// They might also be received upon JOINing on authed connection, however we don't do that
+	tcb.TwitchWrite.OnUserStateMessage(func(message twitch.UserStateMessage) {
 		channelID, ok := tcb.Logins[message.Channel]
 		if !ok {
 			// tcb.Logins map didn't have current channel's ID
@@ -74,30 +102,21 @@ func registerEvents(tcb *bot.Bot) {
 
 		channel := tcb.Channels[channelID]
 
-		// Check if Channel.Mode changed by comparing bot's state
-		newMode := bot.ChannelModeNormal
-
 		// Bot will always have elevated permissions in its own chat, saving some time with the early-out
 		if channel.Login == tcb.Self.Login {
 			return
 		}
 
-		userType, ok := message.Tags["user-type"]
-		switch {
-		case !ok:
-			log.Println("[TwitchIRC:USERSTATE] user-type tag was not found in the IRC message, either no capabilities or Twitch removed this tag xd")
+		// Check if Channel.Mode changed by comparing bot's state
+		newMode := bot.ChannelModeNormal
 
-		case userType == "mod":
+		// Check if we have privileged write limits - by being either a moderator or vip
+		// 1. Check for being a moderator - do this via 'mod' message tag which should be present on every twitch PRIVMSG
+		// 2. Check for being a VIP - do this via checking if user has a VIP badge
+		if modTag, ok := message.Tags["mod"]; ok && modTag == "1" {
 			newMode = bot.ChannelModeModerator
-
-		default:
-			// Since user-type does not care about VIP status, we need to check badges
-			for key := range message.User.Badges {
-				if key == "vip" || key == "moderator" {
-					newMode = bot.ChannelModeModerator
-					break
-				}
-			}
+		} else if _, ok := message.User.Badges["vip"]; ok {
+			newMode = bot.ChannelModeModerator
 		}
 
 		// Update ChannelMode in the current channel if it differs
@@ -110,25 +129,14 @@ func registerEvents(tcb *bot.Bot) {
 	})
 
 	// NOTICE
-	tcb.TwitchIRC.OnNoticeMessage(func(message twitch.NoticeMessage) {
-		channelID, ok := tcb.Logins[message.Channel]
-		if !ok {
-			// tcb.Logins map didn't have current channel's ID
-			// Note: this should realistically never occur though, but early exit to prevent panic
-			return
-		}
-		channel := tcb.Channels[channelID]
-
-		log.Printf("[TwitchIRC:NOTICE] %s in %s\n", message.MsgID, channel)
-
-		switch message.MsgID {
-		case "msg_banned", "msg_channel_suspended":
-			err := channel.ChangeMode(tcb.Mongo, bot.ChannelModeInactive)
-			if err != nil {
-				log.Printf("Failed to change mode in %s: %s\n", channel, err)
-			}
-		default:
-		}
+	// This might be relevant for both read and write connections:
+	// on Read: a channel might be suspended
+	// on Write: the bot user might be banned from channel it attempts to send a message in
+	tcb.TwitchRead.OnNoticeMessage(func(message twitch.NoticeMessage) {
+		handlerOnNoticeMessage(tcb, &message, "read")
+	})
+	tcb.TwitchWrite.OnNoticeMessage(func(message twitch.NoticeMessage) {
+		handlerOnNoticeMessage(tcb, &message, "write")
 	})
 
 	// Twitch EventSub events
