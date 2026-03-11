@@ -32,6 +32,7 @@ func main() {
 
 	// twitch read conn
 	twitchRead := twitch.NewAnonymousClient()
+	twitchRead.SetJoinRateLimiter(twitch.CreateVerifiedRateLimiter())
 
 	// twitch write conn
 	twitchWrite := twitch.NewClient(cfg.TwitchLogin, "oauth:"+cfg.TwitchOAuth)
