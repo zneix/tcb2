@@ -35,7 +35,7 @@ type Bot struct {
 	StartTime time.Time
 }
 
-func (b *Bot) MapLoginToID(login string, id string) {
+func (b *Bot) MapLoginToID(login, id string) {
 	b.loginsMu.Lock()
 	b.Logins[login] = id
 	b.loginsMu.Unlock()
