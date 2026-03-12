@@ -17,10 +17,10 @@ jobs:
         go: ["oldstable", "stable"]
 
     steps:
-      #- name: Set up Go
-        #uses: actions/setup-go@v6
-        #with:
-          #go-version: ${{ matrix.go }}
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ matrix.go }}
 
       - name: Check out into the Go module directory
         uses: actions/checkout@v6
