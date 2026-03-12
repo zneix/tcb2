@@ -79,14 +79,14 @@ func main() {
 	// Check twitch connection's .Connect for a good example
 	// For now as a scuffed fix read connection will be blocking
 	go func() {
-		err := tcb.TwitchWrite.Connect()
+		err = tcb.TwitchWrite.Connect()
 		if err != nil {
-			log.Fatalln(fmt.Errorf("Twitch write connection errored: %w", err))
+			log.Fatalln(fmt.Errorf("twitch write connection errored: %w", err))
 		}
 	}()
 
 	err = tcb.TwitchRead.Connect()
 	if err != nil {
-		log.Fatalln(fmt.Errorf("Twitch read connection errored: %w", err))
+		log.Fatalln(fmt.Errorf("twitch read connection errored: %w", err))
 	}
 }
