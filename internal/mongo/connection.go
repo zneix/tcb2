@@ -23,7 +23,7 @@ func NewMongoConnection(bgctx context.Context, cfg *config.TCBConfig) *Connectio
 	clientOptions := options.Client().ApplyURI(uri).SetAuth(credentials)
 
 	// Actually connect to the database and test connection with a ping
-	client, err := mongo.NewClient(clientOptions)
+	client, err := mongo.NewClient(clientOptions) //nolint:staticcheck // MongoDB is going to be replaced with PostgreSQL
 
 	if err != nil {
 		log.Fatalf("[Mongo] Failed to create a new client: %s\n", err)
@@ -39,7 +39,7 @@ func (conn Connection) Connect(bgctx context.Context) {
 	ctx, cancel := context.WithTimeout(bgctx, 10*time.Second)
 	defer cancel()
 
-	err := conn.client.Connect(ctx)
+	err := conn.client.Connect(ctx) //nolint:staticcheck // MongoDB is going to be replaced with PostgreSQL
 	if err != nil {
 		log.Fatalln("[Mongo] Error connecting:", err)
 	}
