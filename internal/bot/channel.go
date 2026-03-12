@@ -35,13 +35,13 @@ func (channel *Channel) String() string {
 	return fmt.Sprintf("#%s(%s)", channel.Login, channel.ID)
 }
 
-func (channel *Channel) StartMessageQueue(twitchIRC *twitch.Client) {
+func (channel *Channel) StartMessageQueue(twitchWrite *twitch.Client) {
 	// log.Println("Starting message queue for", channel)
 	defer log.Println("[Channel] Message queue suddenly quit(?) for", channel)
 
 	for message := range channel.QueueChannel {
 		// Actually send the message to the chat
-		twitchIRC.Say(channel.Login, message.Message)
+		twitchWrite.Say(channel.Login, message.Message)
 
 		// Update last sent message
 		channel.LastMsg = message.Message

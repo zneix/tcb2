@@ -21,10 +21,11 @@ type Self struct {
 }
 
 type Bot struct {
-	TwitchIRC *twitch.Client
-	Mongo     *mongo.Connection
-	Helix     *helix.Client
-	EventSub  *eventsub.EventSub
+	TwitchRead  *twitch.Client
+	TwitchWrite *twitch.Client
+	Mongo       *mongo.Connection
+	Helix       *helix.Client
+	EventSub    *eventsub.EventSub
 
 	loginsMu sync.Mutex
 	Logins   map[string]string

@@ -15,7 +15,7 @@ import (
 )
 
 // loadChannels fetches configured channels from the database, sets default values and message queue for each of them
-func loadChannels(bgctx context.Context, mongoConn *mongo.Connection, twitchIRC *twitch.Client) map[string]*bot.Channel {
+func loadChannels(bgctx context.Context, mongoConn *mongo.Connection, twitchWrite *twitch.Client) map[string]*bot.Channel {
 	channels := make(map[string]*bot.Channel)
 
 	ctx, cancel := context.WithTimeout(bgctx, 10*time.Second)
@@ -29,7 +29,6 @@ func loadChannels(bgctx context.Context, mongoConn *mongo.Connection, twitchIRC 
 	})
 	if err != nil {
 		log.Fatalln("[Mongo] Error querying channels:", err)
-		return channels
 	}
 
 	for cur.Next(ctx) {
@@ -43,7 +42,7 @@ func loadChannels(bgctx context.Context, mongoConn *mongo.Connection, twitchIRC 
 
 		// Initialize default values
 		channel.QueueChannel = make(chan *bot.QueueMessage)
-		go channel.StartMessageQueue(twitchIRC)
+		go channel.StartMessageQueue(twitchWrite)
 
 		channels[channel.ID] = &channel
 	}
@@ -108,7 +107,7 @@ func handleChannelsChunk(tcb *bot.Bot, chunk []string) {
 		channel.CurrentTitle = respChannel.Title
 
 		// JOIN the channel
-		tcb.TwitchIRC.Join(channel.Login)
+		tcb.TwitchRead.Join(channel.Login)
 
 		// Create all EventSub subscriptions parallelly
 		for _, subscription := range channelSubscriptions {
