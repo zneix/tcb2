@@ -15,7 +15,7 @@ import (
 	mongodb "go.mongodb.org/mongo-driver/mongo"
 )
 
-// subEventTrigger will fetch relevant subscriptions and prepare ping messages, then attempt sending them in the channel where the event has occured
+// subEventTrigger will fetch relevant subscriptions and prepare ping messages, then attempt sending them in the channel where the event has occurred
 func subEventTrigger(msg *bot.SubEventMessage) {
 	channel := msg.Bot.Channels[msg.ChannelID]
 	ctx := context.TODO()

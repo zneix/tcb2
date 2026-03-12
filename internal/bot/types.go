@@ -35,7 +35,7 @@ type Bot struct {
 	StartTime time.Time
 }
 
-func (b *Bot) MapLoginToID(login string, id string) {
+func (b *Bot) MapLoginToID(login, id string) {
 	b.loginsMu.Lock()
 	b.Logins[login] = id
 	b.loginsMu.Unlock()
@@ -72,7 +72,6 @@ type QueueMessage struct {
 
 // enums
 
-//
 // ChannelMode indicates the bot's state in a Channel
 type ChannelMode int
 
@@ -100,7 +99,6 @@ func (mode ChannelMode) MessageRatelimit() time.Duration {
 	return 1650 * time.Millisecond
 }
 
-//
 // PajbotAPIMode indicates bot's behavior regarding banphrase checks in channels that have pajbot API configured
 type PajbotAPIMode int
 
@@ -111,7 +109,6 @@ const (
 	PajbotAPIModeEnabled
 )
 
-//
 // SubEventType defines event to which users can subscribe
 type SubEventType int
 

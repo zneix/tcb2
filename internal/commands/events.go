@@ -20,7 +20,7 @@ func Events(tcb *bot.Bot) *bot.Command {
 		Run: func(msg twitch.PrivateMessage, args []string) {
 			channel := tcb.Channels[msg.RoomID]
 
-			eventStrings := []string{}
+			eventStrings := make([]string, 0, len(bot.SubEventDescriptions))
 			for i, desc := range bot.SubEventDescriptions {
 				eventStrings = append(eventStrings, fmt.Sprintf("%s (%s)", bot.SubEventType(i), desc))
 			}
