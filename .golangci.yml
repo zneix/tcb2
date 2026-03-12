@@ -14,7 +14,7 @@ linters:
     - govet
     - ineffassign
   # - lll
-  # - misspell
+    - misspell
     - staticcheck
     - unconvert
     - unparam

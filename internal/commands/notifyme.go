@@ -45,7 +45,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 				})
 				if err != nil {
 					log.Println("[Mongo] Failed deleting subscriptions:", err)
-					channel.Sendf("@%s, internal server error occured while trying to delete your old subscriptions monkaS @zneix", msg.User.Name)
+					channel.Sendf("@%s, internal server error occurred while trying to delete your old subscriptions monkaS @zneix", msg.User.Name)
 					return
 				}
 				log.Printf("[Mongo] Deleted %d subscription(s) for %# v(%s) in %s", resDel.DeletedCount, msg.User.Name, msg.User.ID, channel)
@@ -63,7 +63,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 				resIns, err := tcb.Mongo.CollectionSubs(msg.RoomID).InsertMany(ctx, allEvents)
 				if err != nil {
 					log.Println("[Mongo] Failed adding new subscriptions for all events:", err)
-					channel.Sendf("@%s, internal server error occured while trying to add your new subscriptions monkaS @zneix", msg.User.Name)
+					channel.Sendf("@%s, internal server error occurred while trying to add your new subscriptions monkaS @zneix", msg.User.Name)
 					return
 				}
 				log.Printf("[Mongo] Added %d subscriptions for %# v(%s) in %s, ID: %v", len(resIns.InsertedIDs), msg.User.Name, msg.User.ID, channel, resIns.InsertedIDs)
@@ -151,7 +151,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 				})
 				if err != nil {
 					log.Println("[Mongo] Failed deleting subscriptions:", err)
-					channel.Sendf("@%s, internal server error occured while trying to delete your old subscriptions monkaS @zneix", msg.User.Name)
+					channel.Sendf("@%s, internal server error occurred while trying to delete your old subscriptions monkaS @zneix", msg.User.Name)
 					return
 				}
 				deletedSubCount = int(res.DeletedCount)
@@ -167,7 +167,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			})
 			if err != nil {
 				log.Println("[Mongo] Failed adding new subscription:", err)
-				channel.Sendf("@%s, internal server error occured while trying to add your new subscription monkaS @zneix", msg.User.Name)
+				channel.Sendf("@%s, internal server error occurred while trying to add your new subscription monkaS @zneix", msg.User.Name)
 				return
 			}
 			log.Printf("[Mongo] Added 1 subscription for %s(%s) in %s, ID: %v", msg.User.Name, msg.User.ID, channel, res.InsertedID)

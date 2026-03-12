@@ -57,7 +57,7 @@ func RemoveMe(tcb *bot.Bot) *bot.Command {
 			res, err := tcb.Mongo.CollectionSubs(msg.RoomID).DeleteMany(context.TODO(), removeQuery)
 			if err != nil {
 				log.Println("[Mongo] Failed deleting subscriptions: " + err.Error())
-				channel.Sendf("@%s, internal server error occured while trying to delete your subscriptions monkaS @zneix", msg.User.Name)
+				channel.Sendf("@%s, internal server error occurred while trying to delete your subscriptions monkaS @zneix", msg.User.Name)
 				return
 			}
 			log.Printf("[Mongo] Deleted %d subscription(s) for %# v(%s) in %s", res.DeletedCount, msg.User.Name, msg.User.ID, channel)
