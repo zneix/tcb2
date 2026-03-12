@@ -96,7 +96,8 @@ func handleChannelsChunk(tcb *bot.Bot, chunk []string) {
 		return
 	}
 
-	for _, respChannel := range respC.Data.Channels {
+	for i := range respC.Data.Channels {
+		respChannel := respC.Data.Channels[i] // use index-based iteration to avoid copying values on each iter
 		channel := tcb.Channels[respChannel.BroadcasterID]
 
 		// Set the ID in map translating login names back to IDs
