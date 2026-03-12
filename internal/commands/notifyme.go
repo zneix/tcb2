@@ -127,7 +127,7 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			// inform them about it and how can they unsubscribe
 			if hasThisSubWithThisValue {
 				reply := fmt.Sprintf("@%s, you already have a subscription to the event %s", msg.User.Name, event)
-				if len(value) > 0 {
+				if value != "" {
 					reply += " with the provided value FeelsDankMan .."
 				}
 
@@ -136,14 +136,14 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			}
 
 			// User has a subscription for this event for all values
-			if hasThisSubAllValues && len(value) > 0 {
+			if hasThisSubAllValues && value != "" {
 				channel.Sendf("@%s, you already have a subscription for event %s that matches all values. If you want to be pinged only on specific values, use \"%sremoveme %s\" first before running this command again", msg.User.Name, event, tcb.Commands.Prefix, event)
 				return
 			}
 
 			// User has subscription(s) for this event, but requests a subscription for all values
 			// We want to delete all other subscriptions for this event for this user first
-			if hasThisSub && len(value) < 1 {
+			if hasThisSub && value == "" {
 				var res *mongo.DeleteResult
 				res, err = tcb.Mongo.CollectionSubs(msg.RoomID).DeleteMany(ctx, bson.M{
 					"user_id": msg.User.ID,
@@ -173,11 +173,11 @@ func NotifyMe(tcb *bot.Bot) *bot.Command {
 			log.Printf("[Mongo] Added 1 subscription for %s(%s) in %s, ID: %v", msg.User.Name, msg.User.ID, channel, res.InsertedID)
 
 			var givenValue string
-			if len(value) > 0 {
+			if value != "" {
 				givenValue = fmt.Sprintf(", but only when the %s contains provided value", event)
 			}
 			reply := fmt.Sprintf("@%s, I will now ping you when the %s%s!", msg.User.Name, bot.SubEventDescriptions[event], givenValue)
-			if hasThisSub && len(value) < 1 {
+			if hasThisSub && value == "" {
 				// We had to remove all other subscriptions for this event and add a new one
 				reply += fmt.Sprintf(" You previously had %d subscription(s) for this event that were set to only match specific values. These subscriptions have been removed and you will now be notified regardless of the value SeemsGood", deletedSubCount)
 			}

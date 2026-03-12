@@ -63,7 +63,7 @@ func RemoveMe(tcb *bot.Bot) *bot.Command {
 			log.Printf("[Mongo] Deleted %d subscription(s) for %# v(%s) in %s", res.DeletedCount, msg.User.Name, msg.User.ID, channel)
 
 			if res.DeletedCount == 0 {
-				if len(value) > 0 {
+				if value != "" {
 					// Didn't match the value
 					channel.Sendf("@%s, you are not subscribed to the event %s with provided value FeelsDankMan %s", msg.User.Name, event, checkAllEvents)
 				} else {
@@ -74,7 +74,7 @@ func RemoveMe(tcb *bot.Bot) *bot.Command {
 			}
 
 			reply := fmt.Sprintf("@%s, successfully removed %d subscription(s) to event %s", msg.User.Name, res.DeletedCount, event)
-			if len(value) > 0 {
+			if value != "" {
 				reply += ", but only for the provided value"
 			}
 			channel.Sendf(reply)
