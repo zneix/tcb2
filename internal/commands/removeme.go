@@ -77,7 +77,7 @@ func RemoveMe(tcb *bot.Bot) *bot.Command {
 			if value != "" {
 				reply += ", but only for the provided value"
 			}
-			channel.Sendf(reply)
+			channel.Send(reply)
 		},
 	}
 }
