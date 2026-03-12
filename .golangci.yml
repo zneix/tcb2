@@ -21,7 +21,6 @@ linters:
     - unused
     - whitespace
   # - godox
-  # - maligned
     - prealloc
 
   # don't enable:
@@ -37,12 +36,8 @@ linters:
     govet:
       enable:
         - shadow
-    golint:
-      min-confidence: 0
     gocyclo:
       min-complexity: 25
-    maligned:
-      suggest-new: true
     goconst:
       min-len: 2
       min-occurrences: 4
