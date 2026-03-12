@@ -1,6 +1,6 @@
 module github.com/zneix/tcb2
 
-go 1.25.0
+go 1.25.8
 
 require (
 	github.com/gempir/go-twitch-irc/v4 v4.4.1
