@@ -5,7 +5,7 @@ linters:
   enable:
     - bodyclose
     - dogsled
-  # - dupl
+    - dupl
     - errcheck
     - funlen
     - goconst
