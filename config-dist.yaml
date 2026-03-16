@@ -1,0 +1,31 @@
+# Example Titlechange_bot's configuration file
+# Documentation can be found in internal/config/model.go
+
+# Bot
+
+#command-prefix: "!"
+
+# Misc
+
+#supinic-api-key: ""
+
+# API
+
+#base-url: ""
+#bind-address: "localhost:2558"
+
+# Twitch
+
+#twitch-login: ""
+#twitch-oauth: ""
+#twitch-client-id: ""
+#twitch-client-secret: ""
+#twitch-eventsub-secret: ""
+
+# Mongo 🥭
+
+#mongo-username: ""
+#mongo-password: ""
+#mongo-port: "2017"
+#mongo-database-name: "tcb2"
+#mongo-auth-db: "admin"
