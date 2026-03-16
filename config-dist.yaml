@@ -26,6 +26,6 @@
 
 #mongo-username: ""
 #mongo-password: ""
-#mongo-port: "2017"
+#mongo-port: "27017"
 #mongo-database-name: "tcb2"
 #mongo-auth-db: "admin"
