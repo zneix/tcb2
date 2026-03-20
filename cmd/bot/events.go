@@ -46,6 +46,10 @@ func registerEvents(tcb *bot.Bot) {
 		log.Println("[TwitchIRC:write] connected")
 	})
 
+	tcb.TwitchRead.OnReconnectMessage(func(message twitch.ReconnectMessage) {
+		log.Println("[TwitchIRC:read] received RECONNECT:", message.Raw)
+	})
+
 	// PRIVMSG
 	tcb.TwitchRead.OnPrivateMessage(func(message twitch.PrivateMessage) {
 		// Early out in case message does not start with command prefix - meaning it's not a command
