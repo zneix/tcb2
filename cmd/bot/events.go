@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"slices"
 	"strings"
 	"time"
 	"unicode/utf8"
@@ -71,10 +72,8 @@ func registerEvents(tcb *bot.Bot) {
 
 		// Skip command execution if it's disabled in the target channel
 		channel := tcb.Channels[message.RoomID]
-		for _, disabledCmdName := range channel.DisabledCommands {
-			if commandName == disabledCmdName {
-				return
-			}
+		if slices.Contains(channel.DisabledCommands, commandName) {
+			return
 		}
 
 		// TODO: [Permissions] Check if user is allowed to execute the command
